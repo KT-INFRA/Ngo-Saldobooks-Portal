@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <style>
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #fff;
+        width: 100%;
+        height: 100vh;
+        margin: 0;
+        flex-direction: column;
+        overflow: hidden; /* Ensure the image doesn't show up outside the viewport during animation */
+      }
+      img {
+        width: 230px;
+        animation:
+          rollIn 1s ease-in-out,
+          scaleUp 1s ease-in-out 1s; /* The second animation starts after 1 second delay */
+      }
+
+      @keyframes rollIn {
+        0% {
+          transform: translateX(-100vw) rotate(-360deg); /* Start from off-screen left with a full rotation */
+        }
+        100% {
+          transform: translateX(0) rotate(0); /* End at the center with no rotation */
+        }
+      }
+
+      @keyframes scaleUp {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* @keyframes titleAnimation {
+            0% {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        } */
+
+
+      h1 {
+        margin-top: 40px;
+        font-size: 40px;
+        background: linear-gradient(25deg, #3b975d, #f2e84d);
+        -webkit-background-clip: text;
+        color: transparent; /* Make the text itself transparent so the gradient shows through */
+        animation: titleAnimation 1s ease-in-out; /* Add animation to title */ 
+    }
+      @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+
+      .wrapper {
+        background-color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <img src="logo.png" alt="Logo" />
+    <!-- <h1>ICFRE</h1> -->
+  </body>
+</html>
