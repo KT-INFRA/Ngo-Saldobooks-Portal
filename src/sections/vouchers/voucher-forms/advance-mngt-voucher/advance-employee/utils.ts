@@ -41,8 +41,8 @@ export const initialValues: InitialValues = {
 
 export const firstStepValidationSchema = Yup.object({
   projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
-  letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
-  narration: Yup.string().required('Narration is required')
+ letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
+ narration: Yup.string().required('Narration is required')
 });
 
 export const secondStepValidationSchema = Yup.object({

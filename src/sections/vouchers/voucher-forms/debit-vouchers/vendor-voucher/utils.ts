@@ -39,23 +39,28 @@ export const initialValues: InitialValues = {
       taxableAmount: 0
     }
   ],
-  projectFiles: []  
+  projectFiles: []
 };
 
 export const firstStepValidationSchema = Yup.object({
   vendorId: Yup.number().required('Vendor is required').min(1, 'Please select a valid Vendor'),
-  tds: Yup.number().required('TDS is required').min(1, 'Please select a valid TDS'),
-  gst: Yup.number().required('GST is required').min(1, 'Please select a valid GST'),
+  // tds: Yup.number().required('TDS is required').min(1, 'Please select a valid TDS'),
+  tds: Yup.number(),
+  // gst: Yup.number().required('GST is required').min(1, 'Please select a valid GST'),
+  gst: Yup.number(),
   projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
-  letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
-  narration: Yup.string().required('Narration is required')
+  // letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
+  // narration: Yup.string().required('Narration is required')
+  letterReferenceNo: Yup.string().optional(),
+  narration: Yup.string().optional()
 });
 
 export const secondStepValidationSchema = Yup.object({
   items: Yup.array()
     .of(
       Yup.object().shape({
-        name: Yup.string().required('Item Name is required'),
+        // name: Yup.string().required('Item Name is required'),
+        name: Yup.string().optional(),
         account_head_id: Yup.number().required('Account Head ID is required').min(1, 'Please select a valid Account Head ID'),
         taxableAmount: Yup.number().required('Tax Amount is required').min(1, 'Tax Amount must be greater than 0')
       })

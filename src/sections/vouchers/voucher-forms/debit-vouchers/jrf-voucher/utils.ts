@@ -11,7 +11,7 @@ export interface Item {
   electricity_fees: number;
   water_fees: number;
   fellowship_fees: number;
-  
+
 }
 
 export interface InitialValues {
@@ -44,12 +44,13 @@ export const initialValues: InitialValues = {
       fellowship_fees: 0
     }
   ],
-  projectFiles: [] 
+  projectFiles: []
 };
 
 export const firstStepValidationSchema = Yup.object({
   projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
-  letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
+  // letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
+  letterReferenceNo: Yup.string().optional(),
   narration: Yup.string().required('Narration is required')
 });
 
@@ -57,7 +58,8 @@ export const secondStepValidationSchema = Yup.object({
   items: Yup.array()
     .of(
       Yup.object().shape({
-        name: Yup.string().required('Item Name is required'),
+        // name: Yup.string().required('Item Name is required'),
+        name: Yup.string().optional(),
         beneficiary_id: Yup.number().required('Employee is required').min(1, 'Please select a valid Employee'),
         amount: Yup.number().required('Tax Amount is required').min(1, 'Tax Amount must be greater than 0')
       })

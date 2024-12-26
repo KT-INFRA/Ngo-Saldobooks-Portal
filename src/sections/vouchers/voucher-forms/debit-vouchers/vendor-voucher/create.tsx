@@ -130,7 +130,7 @@ export default function VendorVoucher() {
     } else {
       const touchedProperties: FormikTouched<InitialValues> = Object.keys(initialValues).reduce((acc, key) => {
         if (key !== 'items') {
-          acc[key as keyof  Omit<InitialValues, "items"|"projectFiles">] = true;
+          acc[key as keyof Omit<InitialValues, "items" | "projectFiles">] = true;
         }
         return acc;
       }, {} as FormikTouched<InitialValues>);
@@ -415,8 +415,8 @@ export default function VendorVoucher() {
                                 const taxData = getTaxData(item.taxableAmount, getSelectedGST?.percent, getSelectedTDS?.percent);
                                 return acc + taxData?.totalAmount; // Correct property
                               }, 0);
-                              
-                              
+
+
                               return (
                                 <>
                                   <TableContainer style={{ overflowX: 'auto' }}>

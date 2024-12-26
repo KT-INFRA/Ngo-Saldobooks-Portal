@@ -39,7 +39,7 @@ import {
   Logout
 } from 'iconsax-react';
 import { Chip } from '@mui/material';
-import logo from 'assets/images/logo.png';
+import logo from 'assets/images/Payir_Logo 1.png';
 
 // types
 interface TabPanelProps {

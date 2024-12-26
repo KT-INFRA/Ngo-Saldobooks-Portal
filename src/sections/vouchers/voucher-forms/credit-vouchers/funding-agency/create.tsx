@@ -351,7 +351,7 @@ export default function AddFundingAgencyVoucher() {
                                 },
                                 {
                                   id: 6,
-                                  label: 'Enter Payment Ref /Chq No',
+                                  label: 'Enter Payment Bank /Chq No',
                                   field: 'paymentRef',
                                   type: 'input'
                                 }

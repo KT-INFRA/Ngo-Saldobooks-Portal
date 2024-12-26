@@ -53,7 +53,8 @@ export const firstStepValidationSchema = Yup.object({
   paymentRef: Yup.string().required('Payment Reference is required'),
   voucherDate: Yup.string().required('Voucher Date is required').default(dayjs().format('YYYY-MM-DD')),
   projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
-  letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
+  // letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
+  letterReferenceNo: Yup.string().optional(), 
   narration: Yup.string().required('Narration is required')
 });
 

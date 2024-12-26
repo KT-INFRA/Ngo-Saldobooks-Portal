@@ -11,7 +11,7 @@ import { Stack } from '@mui/system';
  *
  */
 
-import logo from 'assets/images/logo.png';
+import logo from 'assets/images/Payir_Logo 1.png';
 import { ThemeMode } from 'config';
 // ==============================|| LOGO SVG ||============================== //
 
@@ -32,7 +32,7 @@ export default function LogoMain() {
           {/* {'Institute of Forest Genetics'}
           <br />
           {'and Tree Breeding'} */}
-          {'Van Lekha'}
+          {'Payir'}
         </Typography>
       </Stack>
     </Stack>

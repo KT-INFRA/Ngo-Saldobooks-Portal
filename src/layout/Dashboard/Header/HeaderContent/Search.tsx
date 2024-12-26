@@ -22,7 +22,7 @@ export default function Search() {
         </Typography>
         <Chip label={user?.user_type_name} variant="combined" size="small" /> */}
         <Typography color="black" variant="h5">
-          {'Institute of Forest Genetics And Tree Breeding'.toUpperCase()}
+          {'PAYIR TRUST'.toUpperCase()}
         </Typography>
       </Stack>
       {/* <FormControl sx={{ width: { xs: '100%', md: 224 } }}>

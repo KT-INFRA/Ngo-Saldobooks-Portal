@@ -1,7 +1,7 @@
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { ThemeMode } from 'config';
-import logo from 'assets/images/logo.png';
+import logo from 'assets/images/Payir_Logo 1.png';
 
 /**
  * if you want to use image instead of <svg> uncomment following.

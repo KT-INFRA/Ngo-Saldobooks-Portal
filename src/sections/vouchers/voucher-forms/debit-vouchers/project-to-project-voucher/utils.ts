@@ -33,12 +33,13 @@ export const initialValues: InitialValues = {
       amount: 0
     }
   ],
-  projectFiles: [] 
+  projectFiles: []
 };
 
 export const firstStepValidationSchema = Yup.object({
   projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
-  letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
+  // letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
+  letterReferenceNo: Yup.string().optional(),
   narration: Yup.string().required('Narration is required')
 });
 
