@@ -114,8 +114,8 @@ export const useGetProjectCount = () => {
         refetchOnReconnect: false
     });
     const budgets = data?.data?.data;
-    const aicrpTotal = budgets?.find((item: any) => item.project_group_name === "AICRP Projects").count
-    const eapTotal = budgets?.find((item: any) => item.project_group_name === "EAP Projects").count
+    const aicrpTotal = budgets?.find((item: any) => item.project_group_name === "AICRP Projects")?.count
+    const eapTotal = budgets?.find((item: any) => item.project_group_name === "EAP Projects")?.count
 
     const memoizedValue = useMemo(
         () => ({
