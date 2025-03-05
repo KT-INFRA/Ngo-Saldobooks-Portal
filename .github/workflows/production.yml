@@ -1,9 +1,9 @@
-name: React App Deploy - DEVELOP
+name: React App Deploy - PRODUCTION
 
 on:
   push:
-    branches:
-      - develop
+    tags:
+      - release-v*
 
 jobs:
   build:
@@ -41,20 +41,20 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_S3_BUCKET_DEV: ${{ secrets.AWS_S3_BUCKET_DEV }}
-        run: aws s3 rm s3://ngo-saldobooks-portal-dev.saldobooks.com/ --recursive --region ap-south-1
+          AWS_S3_BUCKET_DEV: ${{ secrets.AWS_S3_BUCKET_PROD }}
+        run: aws s3 rm s3://ngo-saldobooks-portal-prod.saldobooks.com/ --recursive --region ap-south-1
 
       - name: Deploy Into Bucket
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: aws s3 cp ./dist s3://ngo-saldobooks-portal-dev.saldobooks.com/ --recursive --region ap-south-1
+        run: aws s3 cp ./dist s3://ngo-saldobooks-portal-prod.saldobooks.com/ --recursive --region ap-south-1
 
       - name: Invalidate CloudFront
         uses: chetan/invalidate-cloudfront-action@master
         env:
          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-         DISTRIBUTION: ${{ secrets.DEV_CLOUD_FRONT_ID }}
+         DISTRIBUTION: ${{ secrets.PROD_CLOUD_FRONT_ID }}
          PATHS: '/*'
          AWS_REGION: "us-east-1"
