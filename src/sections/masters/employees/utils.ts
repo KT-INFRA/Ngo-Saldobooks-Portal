@@ -85,11 +85,13 @@ export const inputlayouts2: FieldLayout[] = [
 export const personalFieldSchema = Yup.object({
   prefixId: Yup.number().required('Prefix ID is required').notOneOf([0], 'Prefix ID is required'),
   firstName: Yup.string().required('First Name is required'),
-  lastName: Yup.string().required('Last Name is required'),
+  // lastName: Yup.string().required('Last Name is required'),
+  lastName: Yup.string().optional(),
   phone: Yup.string()
     .matches(/^\d{10}$/, 'Phone number is not valid')
     .required('Mobile No is required'),
-  email: Yup.string().email('Invalid email address').required('First Name is required')
+  // email: Yup.string().email('Invalid email address').required('First Name is required')
+  email: Yup.string().optional()
 });
 export const officeFieldSchema = Yup.object({
   empId: Yup.string().when('isPermanentEmp', {
@@ -189,7 +191,8 @@ export const bankFieldSchema = Yup.object().shape({
     .required('IFSC Code is required')
     .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Invalid IFSC Code format'),
   accountNumber: Yup.string().required('Account Number is required').matches(/^\d+$/, 'Account Number must be numeric'),
-  purpose: Yup.string().required('Purpose is required')
+  // purpose: Yup.string().required('Purpose is required')
+  purpose: Yup.string().optional()
 });
 
 export const initialValues: InitialFormValues = {

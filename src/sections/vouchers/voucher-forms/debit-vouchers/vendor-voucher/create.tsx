@@ -3,7 +3,7 @@ import { useState, useMemo } from 'react';
 import MainCard from 'components/MainCard';
 import VoucherItem from './voucher-item';
 import { openSnackbar } from 'api/snackbar';
-import { useCreateDebitVoucher, useGetAccountHead, useGetGSTList, useGetProjectList, useGetTDSList, useGetVendorList } from 'api/voucher';
+import { useCreateDebitVoucher, useGetAccountHead, useGetGSTList, useGetOwnBankAccounts, useGetProjectList, useGetTDSList, useGetVendorList } from 'api/voucher';
 
 import { FieldArray, Formik, FormikErrors, FormikTouched } from 'formik';
 import * as Yup from 'yup';
@@ -60,6 +60,8 @@ export default function VendorVoucher() {
   const { vendors } = useGetVendorList();
   const { gstLists } = useGetGSTList();
   const { tdsLists } = useGetTDSList();
+  const { bankListData, loading } = useGetOwnBankAccounts();
+
 
   const { createVoucher, isLoading: isCreatingVoucher } = useCreateDebitVoucher(
     (response: any) => {
@@ -75,7 +77,8 @@ export default function VendorVoucher() {
           }
         } as SnackbarProps);
       } else if (Array.isArray(response) && response.length > 0) {
-        // Handling validation errors
+        // Handling validation errors  const { bankListData, loading } = useGetOwnBankAccounts();
+
         const errorMessages = response.map((err) => err.msg).join(', ');
         openSnackbar({
           open: true,
@@ -267,7 +270,7 @@ export default function VendorVoucher() {
                                 />
                               </Grid>
                               <Grid item xs={12} md={4}>
-                                <InputLabel sx={{ mb: 1 }}>{'GST'}</InputLabel>
+                                <InputLabel sx={{ mb: 1}}>{'GST'}</InputLabel>
                                 <FormControl sx={{ width: '100%', height: '100%' }}>
                                   <Select
                                     displayEmpty
@@ -289,10 +292,68 @@ export default function VendorVoucher() {
                                   )}
                                 </FormControl>
                               </Grid>
+                              <Grid item xs={12} md={12}>
+                                <InputLabel sx={{ mb: 1 }}>{'TDS'}</InputLabel>
+                                <FormControl sx={{ width: '100%', height: '100%' }}>
+                                  <Select
+                                    displayEmpty
+                                    placeholder="Select TDS"
+                                    name="tds"
+                                    value={values.tds}
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                  >
+                                    <MenuItem disabled value="0">
+                                      Select TDS
+                                    </MenuItem>
+                                    {[...tdsLists].map((tds) => (
+                                      <MenuItem value={tds.value}>{tds.label}</MenuItem>
+                                    ))}
+                                  </Select>
+                                  {touched.tds && Boolean(errors.tds) && (
+                                    <FormHelperText error={Boolean(errors.tds)}>{errors.tds}</FormHelperText>
+                                  )}
+                                </FormControl>
+                              </Grid>
                             </Grid>
                           </Grid>
                           <Grid item xs={12} sm={6} p={2}>
                             <Grid container direction="column" spacing={1}>
+                            <Grid item xs={12} sm={12}>
+                            <InputLabel sx={{ mb: 1 }}>Select Bank</InputLabel>
+                            <Autocomplete
+                             sx={{
+                              '& .MuiInputBase-root': {
+                                height: '48px',
+                                minWidth: '250px',
+                                maxWidth: 'auto'
+                              },
+                              '& .MuiOutlinedInput-root': {
+                                padding: 0
+                              },
+                              '& .MuiAutocomplete-inputRoot': {
+                                padding: '0 14px'
+                              }
+                            }}
+                              value={bankListData.find((bank: { value: string; }) => bank.value === values.bank_id) || null}
+                              onChange={(_e, bank) => {
+                                setFieldValue('bank_id', bank?.value ?? '');
+                              }}
+                              isOptionEqualToValue={(option, value) => option?.value === value?.value}
+                              options={bankListData}
+                              getOptionLabel={(option) => option.label || ''}
+                              loading={loading}
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  name="bank_id"
+                                  placeholder="Select Bank"
+                                  error={touched.bank_id && Boolean(errors.bank_id)}
+                                  helperText={touched.bank_id && errors.bank_id}
+                                />
+                              )}
+                            />
+                          </Grid>
                               {[
                                 {
                                   id: 2,
@@ -331,31 +392,10 @@ export default function VendorVoucher() {
                                   </Grid>
                                 );
                               })}
-                              <Grid item xs={12} md={12}>
-                                <InputLabel sx={{ mb: 1 }}>{'TDS'}</InputLabel>
-                                <FormControl sx={{ width: '100%', height: '100%' }}>
-                                  <Select
-                                    displayEmpty
-                                    placeholder="Select TDS"
-                                    name="tds"
-                                    value={values.tds}
-                                    onBlur={handleBlur}
-                                    onChange={handleChange}
-                                  >
-                                    <MenuItem disabled value="0">
-                                      Select TDS
-                                    </MenuItem>
-                                    {[...tdsLists].map((tds) => (
-                                      <MenuItem value={tds.value}>{tds.label}</MenuItem>
-                                    ))}
-                                  </Select>
-                                  {touched.tds && Boolean(errors.tds) && (
-                                    <FormHelperText error={Boolean(errors.tds)}>{errors.tds}</FormHelperText>
-                                  )}
-                                </FormControl>
-                              </Grid>
+                              
                             </Grid>
                           </Grid>
+                          
                         </Grid>
                       )}
                       {/* {index === 1 && (

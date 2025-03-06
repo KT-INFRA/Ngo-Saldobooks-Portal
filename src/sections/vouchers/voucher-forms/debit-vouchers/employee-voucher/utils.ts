@@ -15,6 +15,7 @@ export interface InitialValues {
   narration: string;
   items: Item[];
   projectFiles: File[];
+  bank_id: string;
 }
 
 export type FormValues = {
@@ -26,13 +27,14 @@ export const initialValues: InitialValues = {
   projectId: 0,
   letterReferenceNo: '',
   narration: '',
+  bank_id: '',
   items: [
     {
       id: 1,
       name: '',
       account_head_id: 0,
       beneficiary_id: 0,
-      amount: 0
+      amount: 0,
     }
   ],
   projectFiles: []
@@ -42,7 +44,8 @@ export const firstStepValidationSchema = Yup.object({
   projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
   // letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
   letterReferenceNo: Yup.string().optional(),
-  narration: Yup.string().required('Narration is required')
+  narration: Yup.string().required('Narration is required'),
+  bank_id: Yup.string().required('Bank ID is required')
 });
 
 export const secondStepValidationSchema = Yup.object({
@@ -109,6 +112,7 @@ export const formateCreateVoucherPayload = async (values: InitialValues) => {
     letter_ref_no: values.letterReferenceNo,
     narration: values.narration,
     receiver_type_id: 1, // for Employee
+    bank_id: values.bank_id,
     items: values.items.map((item, index) => {
       return {
         ordinal: index + 1,

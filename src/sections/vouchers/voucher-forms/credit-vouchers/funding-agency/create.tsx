@@ -3,7 +3,7 @@ import { useState, useMemo } from 'react';
 import MainCard from 'components/MainCard';
 import VoucherItem from './voucher-item';
 import { openSnackbar } from 'api/snackbar';
-import { useCreateCreditVoucher, useGetAccountHead, useGetFundingAgency, useGetPaymentType, useGetProjectList } from 'api/voucher';
+import { useCreateCreditVoucher, useGetAccountHead, useGetOwnBankAccounts, useGetPaymentType, useGetProjectList } from 'api/voucher';
 
 import { FieldArray, Formik, FormikErrors, FormikTouched } from 'formik';
 import * as Yup from 'yup';
@@ -48,14 +48,21 @@ import { SnackbarProps } from 'types/snackbar';
 import VoucherCardTitle from '../../components/voucher-card-title';
 import { InputAdornment } from '@mui/material';
 import { ReactFilesPreview } from 'sections/projects/add-project/FilePicker/ReactFilesPreview';
+import { useGetDonorList } from 'api/masters';
+
 
 // ==============================|| Account Voucher - ADD Voucher ||============================== //
 
 export default function AddFundingAgencyVoucher() {
   const { paymentTypes } = useGetPaymentType();
-  const { fundingAgencies } = useGetFundingAgency();
   const { projects } = useGetProjectList();
-  const { accountHeads } = useGetAccountHead(['C', 'B']);
+  const { accountHeads } = useGetAccountHead(['R', 'C']);
+  const { DonorList, DonorListLoading, DonorError } = useGetDonorList();
+  const { bankListData, loading } = useGetOwnBankAccounts();
+
+
+  const donorTypeOptions = Array.isArray(DonorList) ? DonorList : [];
+
   const { createVoucher, isLoading: isCreatingVoucher } = useCreateCreditVoucher(
     (response: any) => {
       // console.log(response);
@@ -126,7 +133,7 @@ export default function AddFundingAgencyVoucher() {
     } else {
       const touchedProperties: FormikTouched<InitialValues> = Object.keys(initialValues).reduce((acc, key) => {
         if (key !== 'items') {
-          acc[key as keyof Omit< InitialValues, "items"|"projectFiles">] = true;
+          acc[key as keyof Omit<InitialValues, "items" | "projectFiles">] = true;
         }
         return acc;
       }, {} as FormikTouched<InitialValues>);
@@ -164,7 +171,7 @@ export default function AddFundingAgencyVoucher() {
           };
           const files = useMemo(() => values.projectFiles, [values]);
           return (
-            <MainCard title={<VoucherCardTitle voucherType="Credit Voucher" titleText="Funding Agency"></VoucherCardTitle>}>
+            <MainCard title={<VoucherCardTitle voucherType="Credit Voucher" titleText="Donor"></VoucherCardTitle>}>
               <Stepper activeStep={activeStep} orientation="vertical">
                 {steps.map((step, index) => (
                   <Step key={step}>
@@ -272,7 +279,7 @@ export default function AddFundingAgencyVoucher() {
                               </Grid>
                               {/* Voucher Number */}
 
-                              <Grid item xs={12} md={4}>
+                              <Grid item xs={12} md={6}>
                                 <InputLabel sx={{ mb: 1 }}>{'Payment Type'}</InputLabel>
                                 <FormControl sx={{ width: '100%', height: '100%' }}>
                                   <Select
@@ -299,43 +306,50 @@ export default function AddFundingAgencyVoucher() {
                           </Grid>
                           <Grid item xs={12} sm={6} p={2}>
                             <Grid container direction="column" spacing={1}>
-                              <Grid item xs={12} md={12}>
-                                <InputLabel sx={{ mb: 1 }}>{'Funding Agency'}</InputLabel>
+                              <Grid item xs={12} sm={6}>
+                                <InputLabel sx={{ mb: 1 }}>Donor Type</InputLabel>
                                 <Autocomplete
-                                  sx={{
-                                    '& .MuiInputBase-root': {
-                                      height: '48px',
-                                      minWidth: '250px',
-                                      maxWidth: 'auto'
-                                    },
-                                    '& .MuiOutlinedInput-root': {
-                                      padding: 0
-                                    },
-                                    '& .MuiAutocomplete-inputRoot': {
-                                      padding: '0 14px'
-                                    }
+                                  value={donorTypeOptions.find(donor => donor.id === values.donor_type_id) || null}
+                                  onChange={(_e, donor) => {
+                                    setFieldValue('donor_type_id', donor?.id ?? ''); // Set the donor type id in Formik values
                                   }}
-                                  onChange={(_e, fundingAgency) => {
-                                    setFieldValue('fundingAgency', fundingAgency?.value ?? '');
-                                  }}
-                                  defaultValue={
-                                    fundingAgencies.find((fundingAgency) => fundingAgency.value === values.fundingAgency) ?? null
-                                  }
-                                  isOptionEqualToValue={(option, value) => option.value === value.value}
-                                  style={{ width: '100%' }}
-                                  id="fundingAgency"
-                                  options={fundingAgencies}
+                                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                                  options={donorTypeOptions}
+                                  getOptionLabel={(option) => option.name}
                                   renderInput={(params) => (
                                     <TextField
                                       {...params}
-                                      name="fundingAgency"
-                                      placeholder="Funding Agency"
-                                      error={touched.fundingAgency && Boolean(errors.fundingAgency)}
-                                      helperText={touched.fundingAgency && errors.fundingAgency}
+                                      name="donor_type_id"
+                                      placeholder="Select Donor Type"
+                                      error={touched.donor_type_id && Boolean(errors.donor_type_id)} // Validation error display
+                                      helperText={touched.donor_type_id && errors.donor_type_id}
                                     />
                                   )}
                                 />
                               </Grid>
+                              <Grid item xs={12} sm={6}>
+                                <InputLabel sx={{ mb: 1 }}>Select Bank</InputLabel>
+                                <Autocomplete
+                                  value={bankListData.find((bank: { value: string; }) => bank.value === values.bank_id) || null}
+                                  onChange={(_e, bank) => {
+                                    setFieldValue('bank_id', bank?.value ?? '');
+                                  }}
+                                  isOptionEqualToValue={(option, value) => option?.value === value?.value}
+                                  options={bankListData}
+                                  getOptionLabel={(option) => option.label || ''}
+                                  loading={loading}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      name="bank_id"
+                                      placeholder="Select Bank"
+                                      error={touched.bank_id && Boolean(errors.bank_id)}
+                                      helperText={touched.bank_id && errors.bank_id}
+                                    />
+                                  )}
+                                />
+                              </Grid>
+
                               {[
                                 {
                                   id: 2,
@@ -382,6 +396,7 @@ export default function AddFundingAgencyVoucher() {
                               })}
                             </Grid>
                           </Grid>
+
                         </Grid>
                       )}
                       {index === 1 && (
@@ -466,13 +481,13 @@ export default function AddFundingAgencyVoucher() {
                                       </Grid>
                                     </Grid>
                                     {/* pdf adder */}
-                                    <Grid item  xs={12} md={12  }>
+                                    <Grid item xs={12} md={12}>
                                       <ReactFilesPreview
                                         files={files}
                                         getFiles={(files) => {
-                                         setFieldValue('projectFiles', files);
+                                          setFieldValue('projectFiles', files);
                                         }}
-                                        />
+                                      />
                                     </Grid>
                                   </Grid>
                                 </>

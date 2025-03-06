@@ -60,11 +60,13 @@ export const secondStepValidationSchema = Yup.object({
       Yup.object().shape({
         // name: Yup.string().required('Item Name is required'),
         name: Yup.string().optional(),
-        beneficiary_id: Yup.number().required('Employee is required').min(1, 'Please select a valid Employee'),
-        amount: Yup.number().required('Tax Amount is required').min(1, 'Tax Amount must be greater than 0')
+        // beneficiary_id: Yup.number().required('Employee is required').min(1, 'Please select a valid Employee'),
+        beneficiary_id: Yup.number().optional(),
+        // amount: Yup.number().required('Tax Amount is required').min(1, 'Tax Amount must be greater than 0'),
+        amount: Yup.number().optional()
       })
     )
-    .min(1, 'At least one item is required')
+    // .min(1, 'At least one item is required')
 });
 
 export const combinedValidationSchema = firstStepValidationSchema.concat(secondStepValidationSchema);

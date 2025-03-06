@@ -11,7 +11,6 @@ interface Item {
 
 export interface InitialValues {
   voucherNo: string;
-  fundingAgency: number;
   paymentType: number;
   paymentRef: string;
   voucherDate: string;
@@ -20,6 +19,8 @@ export interface InitialValues {
   narration: string;
   projectFiles: File[];
   items: Item[];
+  donor_type_id: number;
+  bank_id: string;
 }
 
 export type FormValues = {
@@ -29,7 +30,7 @@ export type FormValues = {
 
 export const initialValues: InitialValues = {
   voucherNo: '',
-  fundingAgency: 0,
+  donor_type_id: 0,
   paymentType: 0,
   paymentRef: '',
   voucherDate: dayjs().format('YYYY-MM-DD'),
@@ -37,6 +38,7 @@ export const initialValues: InitialValues = {
   letterReferenceNo: '',
   narration: '',
   projectFiles: [],  
+  bank_id: '',
   items: [
     {
       id: 1,
@@ -51,14 +53,15 @@ export default initialValues;
 
 export const firstStepValidationSchema = Yup.object({
   voucherNo: Yup.number().required('Voucher Number is required').min(1, 'Voucher Number Should be Greater than 0'),
-  fundingAgency: Yup.number().required('Funding Agency is required').min(1, 'Please select a valid Funding Agency'),
+  
   paymentType: Yup.number().required('Payment Type is required').min(1, 'Please select a valid Payment Type'),
   paymentRef: Yup.string().required('Payment Reference is required'),
   voucherDate: Yup.string().required('Voucher Date is required').default(dayjs().format('YYYY-MM-DD')),
   projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
   // letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
   letterReferenceNo: Yup.string().optional(),
-  narration: Yup.string().required('Narration is required')
+  narration: Yup.string().required('Narration is required'),
+  bank_id: Yup.string().optional(),
 });
 
 export const secondStepValidationSchema = Yup.object({
@@ -67,7 +70,8 @@ export const secondStepValidationSchema = Yup.object({
       Yup.object().shape({
         // name: Yup.string().required('Item Name is required'),
         name: Yup.string().optional(),
-        account_head_id: Yup.number().required('Account Head ID is required').min(1, 'Please select a valid Account Head ID'),
+        // account_head_id: Yup.number().required('Account Head ID is required').min(1, 'Please select a valid Account Head ID'),
+        account_head_id: Yup.string().optional(),
         amount: Yup.number().required('Amount is required').min(1, 'Amount must be greater than 0')
       })
     )
@@ -125,6 +129,13 @@ export const formateCreateVoucherPayload = async (values: InitialValues) => {
     project_id: values.projectId,
     letter_ref_no: values.letterReferenceNo,
     narration: values.narration,
+    ledger_folio_number: 0,
+    project_financial_year_id: 0,
+    receiver_type_id: 0,
+    voucher_type_id: 0,
+    voucher_category_id: 0,
+    status_id:0,
+    bank_id: values.bank_id,
     items: values.items.map((item, index) => ({
       ordinal: index + 1,
       amount: item.amount,
@@ -133,7 +144,7 @@ export const formateCreateVoucherPayload = async (values: InitialValues) => {
       payment_type_id: values.paymentType,
       ref_number: values.paymentRef,
       item_id: item.id,
-      fund_agency_id: values.fundingAgency
+      donor_id : values.donor_type_id,
     })),
     voucher_files: project_files
   };

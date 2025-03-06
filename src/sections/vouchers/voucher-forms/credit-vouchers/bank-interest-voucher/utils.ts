@@ -34,7 +34,7 @@ export const firstStepValidationSchema = Yup.object({
   voucherNo: Yup.number().required('Voucher Number is required').min(1, 'Voucher Number Should be Greater than 0'),
   accountHeadId: Yup.number().required('Account Head is required').min(1, 'Please select a valid Account Head'),
   voucherDate: Yup.string().required('Voucher Date is required').default(dayjs().format('YYYY-MM-DD')),
-  projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
+  projectId: Yup.number().optional(),
   // letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
   letterReferenceNo: Yup.string().optional(),
   narration: Yup.string().required('Narration is required'),
@@ -95,7 +95,8 @@ export const formateCreateBankVoucherPayload = async (values: InitialValues) => 
     user_id: 1,
     number: values.voucherNo + '/' + dayjs(values?.voucherDate).format('MM'),
     date: values.voucherDate,
-    project_id: values.projectId,
+    // project_id: values.projectId,
+    project_id: null,
     voucher_type_id: 1,
     account_head_id: values.accountHeadId,
     letter_ref_no: values.letterReferenceNo,
@@ -103,7 +104,12 @@ export const formateCreateBankVoucherPayload = async (values: InitialValues) => 
     amount: values.amount,
     voucher_files: project_files,
     payment_type_id: values.paymentType,
-    ref_number: values.paymentRef
+    ref_number: values.paymentRef,
+    ledger_folio_number:0,
+    // project_financial_year_id: null,
+    status_id: 0,
+    bank_id: "2"
+
   };
 };
 

@@ -529,7 +529,7 @@ export function useGetFundingAgencyList() {
     // offset: page,
     // limit: limit,
   };
-  const queryKey = `/main/serve/fund/agency/?${new URLSearchParams(queryParams).toString()}`;
+  const queryKey = `/main/serve/donor/?${new URLSearchParams(queryParams).toString()}`;
   const { data, refetch, isPending, error } = useQuery({
     queryKey: [queryKey, queryParams.toString()],
     queryFn: () => axiosServices.get(queryKey)
@@ -553,7 +553,7 @@ export function useGetFundingAgencyList() {
 // ------------INSERT FUNDING AGENCY--------------
 export const useInsertFundingAgency = (onSuccess = (data: any) => {}, onError = (error: any) => {}) => {
   const { data, mutateAsync, isPending } = useMutation({
-    mutationFn: async (payload: any) => axiosServices.post(`/main/add/fund-agency/`, payload),
+    mutationFn: async (payload: any) => axiosServices.post(`/main/add/donor/`, payload),
     onSuccess: (data) => onSuccess(data?.data),
     onError: onError
   });
@@ -563,6 +563,58 @@ export const useInsertFundingAgency = (onSuccess = (data: any) => {}, onError = 
     insertFundingAgency: mutateAsync
   };
 };
+
+// export function useGetDonorList() {
+//   const { business_id } = getUserData();
+//   const queryParams = {
+//     b: String(business_id)
+//   };
+//   const queryKey = `/main/serve/donor_type/?${new URLSearchParams(queryParams).toString()}`;
+//   const { data, refetch, isPending, error } = useQuery({
+//     queryKey: [queryKey, queryParams.toString()],
+//     queryFn: () => axiosServices.get(queryKey)
+//   });
+//   // eslint-disable-next-line react-hooks/exhaustive-deps
+//   const results = data?.data?.data ?? {};
+//   const memoizedValue = useMemo(
+//     () => ({
+//       DonorList: results,
+//       DonorListLoading: isPending,
+//       DonorError: error,
+//       refetch: refetch
+//     }),
+//     [results, isPending, error, refetch]
+//   );
+
+//   return memoizedValue;
+// }
+export function useGetDonorList() {
+  const { business_id } = getUserData();
+  const queryParams = {
+    b: String(business_id),
+  };
+
+  const queryKey = `/main/serve/donor_type/?${new URLSearchParams(queryParams).toString()}`;
+
+  const { data, refetch, isPending, error } = useQuery({
+    queryKey: [queryKey, queryParams.toString()],
+    queryFn: () => axiosServices.get(queryKey),
+  });
+
+  const results = data?.data?.data ?? [];
+
+  const memoizedValue = useMemo(
+    () => ({
+      DonorList: results, 
+      DonorListLoading: isPending,
+      DonorError: error,
+      refetch: refetch,
+    }),
+    [results, isPending, error, refetch]
+  );
+
+  return memoizedValue;
+}
 
 // --------------------GET TAX---------------
 export function useGetTaxList(value: string) {
@@ -752,7 +804,7 @@ export function useGetOwnBankAccountList() {
 // ------------INSERT OWN BANK ACCOUNT--------------
 export const useInsertOwnBankAccount = (onSuccess = (data: any) => {}, onError = (error: any) => {}) => {
   const { data, mutateAsync, isPending } = useMutation({
-    mutationFn: async (payload: any) => axiosServices.post(`/main/add/own-bank/`, payload),
+    mutationFn: async (payload: any) => axiosServices.post(`/main/add/bank/`, payload),
     onSuccess: (data) => onSuccess(data?.data),
     onError: onError
   });
@@ -775,3 +827,30 @@ export const useInsertNewAccountHead = (onSuccess = (data: any) => {}, onError =
     insertNewAccountHead: mutateAsync
   };
 };
+export function useGetBankAccountHeadType() {
+  const { business_id } = getUserData();
+  const queryParams = {
+    b: String(business_id)
+    // offset: page,
+    // limit: limit,
+  };
+  const queryKey = `/main/serve/account_type/?${new URLSearchParams(queryParams).toString()}`;
+  const { data, refetch, isPending, error } = useQuery({
+    queryKey: [queryKey, queryParams.toString()],
+    queryFn: () => axiosServices.get(queryKey)
+  });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const results = data?.data?.data ?? {};
+  const memoizedValue = useMemo(
+    () => ({
+      accounttype: results,
+      accounttypeloading: isPending,
+      accounttypeerror: error,
+      //hasNextPage: results?.next_page,
+      refetch: refetch
+    }),
+    [results, isPending, error, refetch]
+  );
+
+  return memoizedValue;
+}

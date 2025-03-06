@@ -141,7 +141,7 @@ function ReactTable({ data, columns, modalToggler, loading }: Props) {
         <Stack direction="row" alignItems="center" spacing={2}>
           {permission_add && (
             <Button variant="contained" startIcon={<Add />} onClick={modalToggler} size="large">
-              Add FundingAgency
+              Add Donor
             </Button>
           )}
         </Stack>

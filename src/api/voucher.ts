@@ -85,6 +85,34 @@ export const useGetFundingAgency = () => {
   return memoizedValue;
 };
 
+export function useGetDonorList() {
+  const { business_id } = getUserData();
+  const queryParams = {
+    b: String(business_id),
+  };
+
+  const queryKey = `/main/serve/donor_type/?${new URLSearchParams(queryParams).toString()}`;
+
+  const { data, refetch, isPending, error } = useQuery({
+    queryKey: [queryKey, queryParams.toString()],
+    queryFn: () => axiosServices.get(queryKey),
+  });
+
+  const results = data?.data?.data ?? [];
+
+  const memoizedValue = useMemo(
+    () => ({
+      DonorList: results, 
+      DonorListLoading: isPending,
+      DonorError: error,
+      refetch: refetch,
+    }),
+    [results, isPending, error, refetch]
+  );
+
+  return memoizedValue;
+}
+
 export const useGetBankName = (projectId = 1) => {
   const { business_id } = getUserData();
   const idParam = projectId !== null ? `&project_id=${projectId}` : '';
@@ -138,6 +166,7 @@ export const useGetAccountHeadCommon = () => {
 
   return memoizedValue;
 };
+
 export const useGetIFGTBAccounts = (projectId = 1) => {
   const idParam = projectId !== null ? `&project_id=${projectId}` : '';
   const { data, loading } = useQueryData(
@@ -293,6 +322,7 @@ export const useGetVendorList = () => {
     loading: isLoading
   };
 };
+
 export const useGetEmployeeList = (noDestination = false) => {
   const { business_id } = getUserData();
   const { isLoading, data } = useQuery({
@@ -1130,5 +1160,33 @@ export const useSettleAdvanceManagement = () => {
     data,
     isLoading: isPending,
     settleAdvanceManagement: mutateAsync
+  };
+};
+
+export const useGetOwnBankAccounts = () => {
+  const key = `/main/serve/own_account/bank/`; // API endpoint
+
+  const { isLoading, data } = useQuery({
+    queryKey: [key],
+    queryFn: async () => {
+      const response = await axiosServices.get(key);
+      return response.data; // Extract the response data
+    },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false
+  });
+
+  // Format the data for Autocomplete
+  const formattedData = useMemo(() => {
+    return (data?.data ?? []).map((item: any) => ({
+      value: item.id, // Use bank ID as value
+      label: item.bank_name // Use bank name as label
+    }));
+  }, [data?.data]);
+
+  return {
+    bankListData: formattedData,
+    loading: isLoading
   };
 };

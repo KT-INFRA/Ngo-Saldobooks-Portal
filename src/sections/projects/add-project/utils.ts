@@ -51,37 +51,56 @@ export const initialValues = {
 export const basicFieldSchema = Yup.object().shape({
   projectCode: Yup.string().required('Project Code is required'),
   projectTitle: Yup.string().required('Project Title is required'),
-  projectPI: Yup.number().required('Project PI is required').min(1, 'Project PI is required'),
-  fundingAgency: Yup.number().required('Funding Agency is required').min(1, 'Funding Agency is required'),
+  // projectPI: Yup.number().required('Project PI is required').min(1, 'Project PI is required'),
+  projectPI: Yup.number().optional(),
+  fundingAgency: Yup.number().optional(),
   projectStart: Yup.string().required('Project Start is required').default(dayjs().format('YYYY-MM-DD')),
   isOnGoing: Yup.boolean(),
   // projectApprovedBudget: Yup.number().required('Project Approved Budget is required').positive('Budget must be positive'),
   // projectDuration: Yup.number().required('Project Duration is required').positive('Duration must be positive')
+  // projectDuration: Yup.number().when('isOnGoing', {
+  //   is: true,
+  //   then: (schema) => schema,
+  //   otherwise: (schema) => schema.required('Project Duration is required').positive('Project duration must be a positive number')
+  // }),
   projectDuration: Yup.number().when('isOnGoing', {
     is: true,
     then: (schema) => schema,
-    otherwise: (schema) => schema.required('Project Duration is required').positive('Project duration must be a positive number')
+    otherwise: (schema) => schema.optional()
   }),
+  // projectApprovedBudget: Yup.number().when('isOnGoing', {
+  //   is: true,
+  //   then: (schema) => schema,
+  //   otherwise: (schema) =>
+  //     schema.required('Project Approved Budget is required').positive('Project approved budget must be a positive number')
+  // })
   projectApprovedBudget: Yup.number().when('isOnGoing', {
     is: true,
     then: (schema) => schema,
     otherwise: (schema) =>
-      schema.required('Project Approved Budget is required').positive('Project approved budget must be a positive number')
+      schema.optional()
   })
 });
 export const bankFieldSchema = Yup.object().shape({
-  bankName: Yup.string().required('Bank Name is required'),
-  beneficiaryName: Yup.string().required('Beneficiary Name is required'),
+  // bankName: Yup.string().required('Bank Name is required'),
+  bankName: Yup.string().optional(),
+  // beneficiaryName: Yup.string().required('Beneficiary Name is required'),
+  beneficiaryName: Yup.string().optional(),
+  // ifscCode: Yup.string()
+  //   .required('IFSC Code is required')
+  //   .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Invalid IFSC Code format'),
+  // accountNumber: Yup.string().required('Account Number is required').matches(/^\d+$/, 'Account Number must be numeric'),
   ifscCode: Yup.string()
-    .required('IFSC Code is required')
+    .optional()
     .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Invalid IFSC Code format'),
-  accountNumber: Yup.string().required('Account Number is required').matches(/^\d+$/, 'Account Number must be numeric'),
+  // accountNumber: Yup.string().required('Account Number is required').matches(/^\d+$/, 'Account Number must be numeric'),
+  accountNumber: Yup.string().optional(),
   purpose: Yup.string().required('Purpose is required')
 });
 
 export const assignFieldSchema = Yup.object().shape({
-  associates: Yup.array().min(1, 'Select At least one Associate'),
-  coPIs: Yup.array().min(1, 'Select At least one Co PI')
+  associates: Yup.array().optional(),
+  coPIs: Yup.array().optional(),
 });
 
 export const getvalidationSchema = (step: number) => {
@@ -233,6 +252,7 @@ export const formateCreateProjectPayload = async (values: InitialValues) => {
   return {
     business_id: business_id,
     project_group_id: 1,
+
     user_id: user_id,
     title: values.projectTitle,
     project_code: values.projectCode,
@@ -249,6 +269,7 @@ export const formateCreateProjectPayload = async (values: InitialValues) => {
       ifsc_code: values.ifscCode,
       account_number: values.accountNumber
     },
-    project_role_list: getEmployeesBasedOnAccessType(values)
+    // project_role_list: getEmployeesBasedOnAccessType(values),
+    project_role_list: null
   };
 };

@@ -7,6 +7,7 @@ import {
   useCreateDebitVoucher,
   useGetAccountHead,
   useGetEmployeeList,
+  useGetOwnBankAccounts,
   useGetProjectList,
 } from "api/voucher";
 
@@ -58,6 +59,8 @@ export default function EmployeeVoucher() {
   const { projects } = useGetProjectList();
   const { accountHeads } = useGetAccountHead(["D", "B"]);
   const { employees } = useGetEmployeeList(true);
+  const { bankListData, loading } = useGetOwnBankAccounts();
+  
 
   const { createVoucher, isLoading: isCreatingVoucher } = useCreateDebitVoucher(
     (response: any) => {
@@ -265,6 +268,7 @@ export default function EmployeeVoucher() {
                                   )}
                                 />
                               </Grid>
+                              
                               {/* Project Code */}
                             </Grid>
                           </Grid>
@@ -280,7 +284,7 @@ export default function EmployeeVoucher() {
                               ].map((field: any) => {
                                 return (
                                   <Grid item xs={12}>
-                                    <InputLabel sx={{ mb: 1 }}>
+                                    <InputLabel sx={{ mb: 1}}>
                                       {field.label}
                                     </InputLabel>
                                     <TextField
@@ -319,8 +323,9 @@ export default function EmployeeVoucher() {
                                 );
                               })}
                             </Grid>
+
                           </Grid>
-                          <Grid item xl={12} xs={12} p={0} mt={-2} mb={1}>
+                          <Grid item xs={12} sm={6} p={2}>
                             <InputLabel sx={{ mb: 1 }}>
                               {"Narration"}
                             </InputLabel>
@@ -337,6 +342,41 @@ export default function EmployeeVoucher() {
                               onChange={handleChange}
                               onBlur={handleBlur}
                               fullWidth
+                            />
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <InputLabel sx={{ mb: 1 }}>Select Bank</InputLabel>
+                            <Autocomplete
+                             sx={{
+                              '& .MuiInputBase-root': {
+                                height: '48px',
+                                minWidth: '250px',
+                                maxWidth: 'auto'
+                              },
+                              '& .MuiOutlinedInput-root': {
+                                padding: 0
+                              },
+                              '& .MuiAutocomplete-inputRoot': {
+                                padding: '0 14px'
+                              }
+                            }}
+                              value={bankListData.find((bank: { value: string; }) => bank.value === values.bank_id) || null}
+                              onChange={(_e, bank) => {
+                                setFieldValue('bank_id', bank?.value ?? '');
+                              }}
+                              isOptionEqualToValue={(option, value) => option?.value === value?.value}
+                              options={bankListData}
+                              getOptionLabel={(option) => option.label || ''}
+                              loading={loading}
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  name="bank_id"
+                                  placeholder="Select Bank"
+                                  error={touched.bank_id && Boolean(errors.bank_id)}
+                                  helperText={touched.bank_id && errors.bank_id}
+                                />
+                              )}
                             />
                           </Grid>
                         </Grid>

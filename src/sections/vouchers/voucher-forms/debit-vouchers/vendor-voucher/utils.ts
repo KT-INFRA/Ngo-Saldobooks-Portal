@@ -17,6 +17,7 @@ export interface InitialValues {
   tds: number;
   items: Item[];
   projectFiles: File[];
+  bank_id: string;
 }
 
 export type FormValues = {
@@ -31,6 +32,7 @@ export const initialValues: InitialValues = {
   gst: 0,
   tds: 0,
   narration: '',
+  bank_id: '',
   items: [
     {
       id: 1,
@@ -43,16 +45,18 @@ export const initialValues: InitialValues = {
 };
 
 export const firstStepValidationSchema = Yup.object({
-  vendorId: Yup.number().required('Vendor is required').min(1, 'Please select a valid Vendor'),
+  vendorId: Yup.number().optional(),
   // tds: Yup.number().required('TDS is required').min(1, 'Please select a valid TDS'),
   tds: Yup.number(),
   // gst: Yup.number().required('GST is required').min(1, 'Please select a valid GST'),
   gst: Yup.number(),
   projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
+  bank_id: Yup.string().required('Bank ID is required'),
   // letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
   // narration: Yup.string().required('Narration is required')
   letterReferenceNo: Yup.string().optional(),
-  narration: Yup.string().optional()
+  narration: Yup.string().optional(),
+  
 });
 
 export const secondStepValidationSchema = Yup.object({
@@ -61,12 +65,14 @@ export const secondStepValidationSchema = Yup.object({
       Yup.object().shape({
         // name: Yup.string().required('Item Name is required'),
         name: Yup.string().optional(),
-        account_head_id: Yup.number().required('Account Head ID is required').min(1, 'Please select a valid Account Head ID'),
-        taxableAmount: Yup.number().required('Tax Amount is required').min(1, 'Tax Amount must be greater than 0')
+        // account_head_id: Yup.number().required('Account Head ID is required').min(1, 'Please select a valid Account Head ID'),
+        account_head_id : Yup.number().optional(),
+        // taxableAmount: Yup.number().required('Tax Amount is required').min(1, 'Tax Amount must be greater than 0'),
+        taxableAmount : Yup.number().optional()
       })
     )
-    .min(1, 'At least one item is required')
-});
+    
+}); 
 
 export const combinedValidationSchema = firstStepValidationSchema.concat(secondStepValidationSchema);
 
@@ -176,16 +182,25 @@ export const formateCreateVoucherPayload = async ({
 
   return {
     business_id: 1,
+    number: 0,
+    ledger_folio_number: 0,
+    date: "2000-09-12",
+    project_financial_year_id: 15,
+    voucher_type_id: 0,
+    voucher_category_id: 0,
+    status_id: 0,
     user_id: 1,
     project_id: values.projectId,
     letter_ref_no: values.letterReferenceNo,
     narration: values.narration,
     receiver_type_id: 2, // for vendor,
+    bank_id: values.bank_id,
     items: values.items.map((item, index) => {
       const { tdsAmount, gstAmount, totalAmount } = getTaxData(item.taxableAmount, gstPercent, tdsPercent);
       return {
         ordinal: index + 1,
         beneficiary_id: values.vendorId,
+        // beneficiary_id: 15,
         amount: totalAmount,
         account_head_id: item.account_head_id,
         purpose: item.name,

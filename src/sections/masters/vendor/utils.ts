@@ -45,13 +45,18 @@ export const inputlayouts1: FieldLayout[] = [
 
 export const basicFieldSchema = Yup.object({
   name: Yup.string().required('First Name is required'),
-  email: Yup.string().required('Email is required').email('Invalid email address'),
-  phone: Yup.string()
-    .required('Mobile No is required')
+  // email: Yup.string().required('Email is required').email('Invalid email address'),
+  email: Yup.string().optional(),
+  // phone: Yup.string()
+  //   .required('Mobile No is required')
+  //   .matches(/^\d{10}$/, 'Phone number is not valid'),
+  phone: Yup.string().optional()
     .matches(/^\d{10}$/, 'Phone number is not valid'),
   pan_number: Yup.string().optional(),
   gst_number: Yup.string().optional(),
-  address: Yup.string().required('Address is required')
+  // address: Yup.string().required('Address is required'),
+  address: Yup.string().optional(),
+
 });
 
 export const bankFieldSchema = Yup.object().shape({
@@ -113,10 +118,12 @@ export const formateVendorPayload = async (values: InitialFormValues) => {
     ifsc_code: values.ifsc_code,
     account_number: values.account_number,
     pan_number: values.pan_number || null,
-    phone: values.phone || null,
+    // phone: values.phone || null,
+    phone: values.phone,
     email: values.email,
     gst_number: values.gst_number || null,
-    address: values.address || null,
+    // address: values.address || null,
+    address: values.address,
     business_id: business_id
   };
 };
