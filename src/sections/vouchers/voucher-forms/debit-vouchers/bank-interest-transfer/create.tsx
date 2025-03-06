@@ -29,7 +29,6 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import {
   useCreateBankInterestDebitVoucher,
   useGetAccountHead,
-  useGetFundingAgency,
   useGetIFGTBAccounts,
   useGetPaymentType,
   useGetProjectList,
@@ -60,7 +59,6 @@ export default function BankInterestTransferVoucher() {
   const { projects } = useGetProjectList();
   const { accountHeads } = useGetAccountHead(["I"]);
   const { ifgtbAccounts } = useGetIFGTBAccounts();
-  const { fundingAgencies } = useGetFundingAgency();
   const { createVoucher, isLoading: isCreatingVoucher } =
     useCreateBankInterestDebitVoucher(
       (response: any) => {
@@ -556,7 +554,7 @@ export default function BankInterestTransferVoucher() {
                           </Grid>
                           <Grid container xs={12} sm={12} xl={6} md={6}>
                             <TabPanel index={0} value={selectedTab}>
-                              <Grid item xs={12} md={12}>
+                              {/* <Grid item xs={12} md={12}>
                                 <InputLabel sx={{ mb: 1 }}>
                                   {"Funding Agency"}
                                 </InputLabel>
@@ -609,7 +607,7 @@ export default function BankInterestTransferVoucher() {
                                     />
                                   )}
                                 />
-                              </Grid>
+                              </Grid> */}
                             </TabPanel>
                             <TabPanel index={1} value={selectedTab}>
                               <Grid item xs={12} md={12}>

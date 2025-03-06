@@ -28,7 +28,7 @@ import { InitialFormValues, getvalidationSchema, initialValues, formateFundingAg
 import { StepLabel, Stepper } from '@mui/material';
 import { Step } from '@mui/material';
 import Step1 from './Step1';
-import Step2 from './Step2';
+// import Step2 from './Step2';
 import AnimateButton from 'components/@extended/AnimateButton';
 
 interface StatusProps {
@@ -58,7 +58,7 @@ export default function FormFundingAgencyAdd({
   fundingAgencyRefetch: any;
 }) {
   const [loading, setLoading] = useState<boolean>(true);
-  const steps = ['Basic Details', 'Payment Details'];
+  const steps = ['Basic Details'];
   const [activeStep, setActiveStep] = useState(0);
   const handleBack = () => {
     setActiveStep(activeStep - 1);
@@ -81,6 +81,7 @@ export default function FormFundingAgencyAdd({
     validationSchema: validationSchema,
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
+      alert("Hii");
       try {
         let newFundingAgency: fundingAgencyPayload | any = values;
         const formatedValues = await formateFundingAgencyPayload(newFundingAgency as any);
@@ -193,7 +194,7 @@ export default function FormFundingAgencyAdd({
               ))}
             </Stepper>
             {activeStep === 0 && <Step1 />}
-            {activeStep === 1 && <Step2 />}
+            {/* {activeStep === 1 && <Step2 />} */}
           </DialogContent>
           <Divider />
           <DialogActions sx={{ px: 2 }}>

@@ -33,7 +33,7 @@ export const VoucherTypes: IVoucherType[] = [
     children: [
       {
         id: 1,
-        name: 'Credit Voucher for Funding Agency',
+        name: 'Credit Voucher for Donor',
         hasAccess: getPermission(SubModuleButtonEnum.Accounts.CreateVoucher.GeneralCreditVoucher)?.access
       },
       {

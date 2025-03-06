@@ -176,9 +176,9 @@ export default function JRFFellowshipVoucher() {
                     </StepLabel>
                     <StepContent>
                       {index === 0 && (
-                        <Grid container spacing={2} p={0}>
+                        <Grid container spacing={0} p={0}>
                           <Grid item xs={12} sm={6} p={2}>
-                            <Grid container spacing={1} direction="column">
+                            {/* <Grid container spacing={1} direction="column"> */}
                               {/* Project Code */}
                               <Grid item xs={12} md={12}>
                                 <InputLabel sx={{ mb: 1 }}>{'Project Code'}</InputLabel>
@@ -216,7 +216,7 @@ export default function JRFFellowshipVoucher() {
                                 />
                               </Grid>
                               {/* Project Code */}
-                            </Grid>
+                            {/* </Grid> */}
                           </Grid>
                           <Grid item xs={12} sm={6}>
                             <Grid container direction="column" spacing={1}>
@@ -254,7 +254,7 @@ export default function JRFFellowshipVoucher() {
                               })}
                             </Grid>
                           </Grid>
-                          <Grid item xl={12} xs={12} p={0} mt={-2} mb={1}>
+                          <Grid item xl={12} xs={12} mb={1}>
                             <InputLabel sx={{ mb: 1 }}>{'Narration'}</InputLabel>
                             <TextField
                               id="narration"

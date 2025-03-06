@@ -119,6 +119,10 @@ export const formateCreateVoucherPayload = async (values: InitialValues) => {
     date: values.voucherDate,
     project_id: values.projectId,
     letter_ref_no: values.letterReferenceNo,
+    ledger_folio_number: 0,
+    project_financial_year_id: 0,
+    status_id: 0,
+    bank_id: "1",
     narration: values.narration,
     items: values.items.map((item, index) => ({
       ordinal: index + 1,
