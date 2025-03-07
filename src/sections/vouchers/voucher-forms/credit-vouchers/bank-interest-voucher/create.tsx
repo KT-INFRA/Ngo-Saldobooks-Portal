@@ -26,7 +26,7 @@ import MainCard from 'components/MainCard';
 import { Formik, FormikErrors, FormikTouched } from 'formik';
 import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { useCreateBankInterestCreditVoucher, useGetAccountHead, useGetPaymentType, useGetProjectList } from 'api/voucher';
+import { useCreateBankInterestCreditVoucher, useGetAccountHead, useGetOwnBankAccounts, useGetPaymentType, useGetProjectList } from 'api/voucher';
 import dayjs from 'dayjs';
 import * as Yup from 'yup';
 import {
@@ -48,6 +48,8 @@ export default function AddBankInterestVoucher() {
   const { paymentTypes } = useGetPaymentType();
   const { projects } = useGetProjectList();
   const { accountHeads } = useGetAccountHead(['I']);
+  const { bankListData, loading } = useGetOwnBankAccounts();
+  
 
   const { createVoucher, isLoading: isCreatingVoucher } = useCreateBankInterestCreditVoucher(
     (response: any) => {
@@ -116,21 +118,21 @@ export default function AddBankInterestVoucher() {
     console.log("Next button clicked!");
     const errors = await validateForm();
     console.log("Validation Errors:", errors);
-  
+
     if (Object.keys(errors).length === 0) {
       console.log("Moving to next step...");
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     } else {
       console.log("Validation failed, setting touched fields...");
       const touchedProperties: FormikTouched<InitialValues> = Object.keys(initialValues).reduce((acc, key) => {
-        acc[key as keyof Omit<InitialValues, "items"|"projectFiles">] = true;
+        acc[key as keyof Omit<InitialValues, "items" | "projectFiles">] = true;
         return acc;
       }, {} as FormikTouched<InitialValues>);
-  
+
       setTouched(touchedProperties);
     }
   };
-  
+
 
   const handleSubmit = async (values: InitialValues, actions: { resetForm: () => void }) => {
     try {
@@ -352,7 +354,7 @@ export default function AddBankInterestVoucher() {
                             </Grid>
                             {/* </MainCard> */}
                           </Grid>
-                          <Grid item xl={12} xs={12} md={12}>
+                          <Grid item xs={12} sm={6}>
                             <InputLabel sx={{ mb: 1 }}>{'Narration'}</InputLabel>
                             <TextField
                               id="narration"
@@ -367,6 +369,41 @@ export default function AddBankInterestVoucher() {
                               fullWidth
                             />
                           </Grid>
+                          <Grid item xs={12} sm={6}>
+                                <InputLabel sx={{ mb: 1 }}>Select Bank</InputLabel>
+                                <Autocomplete
+                                  sx={{
+                                    '& .MuiInputBase-root': {
+                                      height: '48px',
+                                      minWidth: '250px',
+                                      maxWidth: 'auto'
+                                    },
+                                    '& .MuiOutlinedInput-root': {
+                                      padding: 0
+                                    },
+                                    '& .MuiAutocomplete-inputRoot': {
+                                      padding: '0 14px'
+                                    }
+                                  }}
+                                  value={bankListData.find((bank: { value: string; }) => bank.value === values.bank_id) || null}
+                                  onChange={(_e, bank) => {
+                                    setFieldValue('bank_id', bank?.value ?? '');
+                                  }}
+                                  isOptionEqualToValue={(option, value) => option?.value === value?.value}
+                                  options={bankListData}
+                                  getOptionLabel={(option) => option.label || ''}
+                                  loading={loading}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      name="bank_id"
+                                      placeholder="Select Bank"
+                                      error={touched.bank_id && Boolean(errors.bank_id)}
+                                      helperText={touched.bank_id && errors.bank_id}
+                                    />
+                                  )}
+                                />
+                              </Grid>
                         </Grid>
                       )}
                       {index === 1 && (
@@ -408,7 +445,7 @@ export default function AddBankInterestVoucher() {
                             </Grid>
                             {/* pdf adder */}
 
-                            <Grid item  xs={12} md={12  }>
+                            <Grid item xs={12} md={12}>
                               <ReactFilesPreview
                                 files={files}
                                 getFiles={(files) => {
