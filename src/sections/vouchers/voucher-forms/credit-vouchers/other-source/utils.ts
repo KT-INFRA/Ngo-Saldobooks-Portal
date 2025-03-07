@@ -121,19 +121,18 @@ export const formateCreateVoucherPayload = async (values: InitialValues) => {
     date: values.voucherDate,
     project_id: values.projectId,
     letter_ref_no: values.letterReferenceNo,
-    ledger_folio_number: 0,
-    project_financial_year_id: 0,
-    status_id: 0,
-    bank_id: values.bank_id,
     narration: values.narration,
+    bank_id: values.bank_id,
+    // ledger_folio_number: 0,
+    // project_financial_year_id: 0,
+    // status_id: 0,
     items: values.items.map((item, index) => ({
-      ordinal: index + 1,
       amount: item.amount,
       account_head_id: item.account_head_id,
       purpose: item.name,
       payment_type_id: values.paymentType,
       ref_number: values.paymentRef,
-      item_id: item.id
+      ordinal: index + 1,
     })),
     voucher_files: project_files
   };

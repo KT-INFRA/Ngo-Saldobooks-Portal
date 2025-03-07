@@ -467,7 +467,7 @@ export default function AddOtherSourceVoucher() {
                               fullWidth
                             />
                           </Grid>
-                          <Grid item xs={12} sm={6}>
+                          <Grid item xs={12} sm={6} p={2} mt={-2}>
                                 <InputLabel sx={{ mb: 1 }}>Select Bank</InputLabel>
                                 <Autocomplete
                                   sx={{
