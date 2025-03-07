@@ -113,18 +113,24 @@ export default function AddBankInterestVoucher() {
     validateForm: () => Promise<FormikErrors<InitialValues>>,
     setTouched: (touched: FormikTouched<InitialValues>) => Promise<void | FormikErrors<InitialValues>>
   ) => {
+    console.log("Next button clicked!");
     const errors = await validateForm();
+    console.log("Validation Errors:", errors);
+  
     if (Object.keys(errors).length === 0) {
+      console.log("Moving to next step...");
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     } else {
+      console.log("Validation failed, setting touched fields...");
       const touchedProperties: FormikTouched<InitialValues> = Object.keys(initialValues).reduce((acc, key) => {
         acc[key as keyof Omit<InitialValues, "items"|"projectFiles">] = true;
         return acc;
       }, {} as FormikTouched<InitialValues>);
-
+  
       setTouched(touchedProperties);
     }
   };
+  
 
   const handleSubmit = async (values: InitialValues, actions: { resetForm: () => void }) => {
     try {
