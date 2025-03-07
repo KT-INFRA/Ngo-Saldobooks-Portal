@@ -7,11 +7,15 @@ import MainCard from 'components/MainCard';
 import SimpleBar from 'components/third-party/SimpleBar';
 // types
 import { InitialFormValues as OwnBankAccount } from './utils';
+import { VendorList } from 'types/masters';
+
 
 interface Props {
   open: boolean;
   modalToggler: (state: boolean) => void;
-  ownBankAccount?: OwnBankAccount | null;
+  //ownBankAccount?: OwnBankAccount | null;
+  ownBankAccount?: VendorList | null;
+
   ownBankAccountRefetch: any;
 }
 

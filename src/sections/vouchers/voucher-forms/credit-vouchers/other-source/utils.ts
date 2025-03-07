@@ -19,6 +19,7 @@ export interface InitialValues {
   narration: string;
   items: Item[];
   projectFiles: File[];
+  bank_id?: string;
 }
 
 export type FormValues = {
@@ -34,6 +35,7 @@ export const initialValues: InitialValues = {
   projectId: 0,
   letterReferenceNo: '',
   narration: '',
+  bank_id: '',
   items: [
     {
       id: 1,
@@ -122,7 +124,7 @@ export const formateCreateVoucherPayload = async (values: InitialValues) => {
     ledger_folio_number: 0,
     project_financial_year_id: 0,
     status_id: 0,
-    bank_id: "1",
+    bank_id: values.bank_id,
     narration: values.narration,
     items: values.items.map((item, index) => ({
       ordinal: index + 1,
