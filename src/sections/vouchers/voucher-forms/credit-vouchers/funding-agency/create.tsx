@@ -225,7 +225,41 @@ export default function AddFundingAgencyVoucher() {
                                 />
                               </Grid>
                               {/* Project Code */}
-
+                              <Grid item xs={12} sm={6}>
+                                <InputLabel sx={{ mb: 1 }}>Donor Type</InputLabel>
+                                <Autocomplete
+                                  sx={{
+                                    '& .MuiInputBase-root': {
+                                      height: '48px',
+                                      minWidth: '250px',
+                                      maxWidth: 'auto'
+                                    },
+                                    '& .MuiOutlinedInput-root': {
+                                      padding: 0
+                                    },
+                                    '& .MuiAutocomplete-inputRoot': {
+                                      padding: '0 14px'
+                                    }
+                                  }}
+                                  value={donorTypeOptions.find(donor => donor.id === values.donor_type_id) || null}
+                                  onChange={(_e, donor) => {
+                                    setFieldValue('donor_type_id', donor?.id ?? ''); // Set the donor type id in Formik values
+                                  }}
+                                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                                  options={donorTypeOptions}
+                                  getOptionLabel={(option) => option.name}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      name="donor_type_id"
+                                      placeholder="Select Donor Type"
+                                      error={touched.donor_type_id && Boolean(errors.donor_type_id)} // Validation error display
+                                      helperText={touched.donor_type_id && errors.donor_type_id}
+                                    />
+                                  )}
+                                />
+                              </Grid>
+                              
                               {/* Voucher Date */}
                               <Grid item xs={12} md={12}>
                                 <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -307,29 +341,21 @@ export default function AddFundingAgencyVoucher() {
                           <Grid item xs={12} sm={6} p={2}>
                             <Grid container direction="column" spacing={1}>
                               <Grid item xs={12} sm={6}>
-                                <InputLabel sx={{ mb: 1 }}>Donor Type</InputLabel>
-                                <Autocomplete
-                                  value={donorTypeOptions.find(donor => donor.id === values.donor_type_id) || null}
-                                  onChange={(_e, donor) => {
-                                    setFieldValue('donor_type_id', donor?.id ?? ''); // Set the donor type id in Formik values
-                                  }}
-                                  isOptionEqualToValue={(option, value) => option.id === value.id}
-                                  options={donorTypeOptions}
-                                  getOptionLabel={(option) => option.name}
-                                  renderInput={(params) => (
-                                    <TextField
-                                      {...params}
-                                      name="donor_type_id"
-                                      placeholder="Select Donor Type"
-                                      error={touched.donor_type_id && Boolean(errors.donor_type_id)} // Validation error display
-                                      helperText={touched.donor_type_id && errors.donor_type_id}
-                                    />
-                                  )}
-                                />
-                              </Grid>
-                              <Grid item xs={12} sm={6}>
                                 <InputLabel sx={{ mb: 1 }}>Select Bank</InputLabel>
                                 <Autocomplete
+                                  sx={{
+                                    '& .MuiInputBase-root': {
+                                      height: '48px',
+                                      minWidth: '250px',
+                                      maxWidth: 'auto'
+                                    },
+                                    '& .MuiOutlinedInput-root': {
+                                      padding: 0
+                                    },
+                                    '& .MuiAutocomplete-inputRoot': {
+                                      padding: '0 14px'
+                                    }
+                                  }}
                                   value={bankListData.find((bank: { value: string; }) => bank.value === values.bank_id) || null}
                                   onChange={(_e, bank) => {
                                     setFieldValue('bank_id', bank?.value ?? '');

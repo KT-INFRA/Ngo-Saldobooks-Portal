@@ -13,6 +13,7 @@ export interface InitialValues {
   letterReferenceNo: string;
   narration: string;
   projectFiles?: File[];
+  bank_id?: string;
 }
 
 export const initialValues: InitialValues = {
@@ -25,7 +26,8 @@ export const initialValues: InitialValues = {
   projectId: 0,
   letterReferenceNo: '',
   narration: '',
-  projectFiles: []
+  projectFiles: [],
+  bank_id: ''
 };
 
 export default initialValues;
@@ -38,7 +40,8 @@ export const firstStepValidationSchema = Yup.object({
   // letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
   letterReferenceNo: Yup.string().optional(), 
   narration: Yup.string().required('Narration is required'),
-  amount: Yup.number().required('Amount is required').min(1, 'Amount must be greater than 0')
+  amount: Yup.number().required('Amount is required').min(1, 'Amount must be greater than 0'),
+  bank_id: Yup.string().optional()
 });
 
 export const secondStepValidationSchema = Yup.object({
@@ -102,6 +105,7 @@ export const formateCreateBankVoucherPayload = async (values: InitialValues) => 
     amount: values.amount,
     payment_type_id: values.paymentType,
     ref_number: values.paymentRef,
-    voucher_files: project_files
+    voucher_files: project_files,
+    bank_id: values.bank_id
   };
 };
