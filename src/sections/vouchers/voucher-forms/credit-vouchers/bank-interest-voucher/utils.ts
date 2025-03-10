@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import * as Yup from 'yup';
 
 export interface InitialValues {
-  voucherNo: string;
+  // voucherNo: string;
   accountHeadId: number;
   amount: number;
   paymentType: number;
@@ -13,11 +13,11 @@ export interface InitialValues {
   letterReferenceNo: string;
   narration: string;
   projectFiles?: File[];
-  bank_id?: string; 
+  bank_id?: string;
 }
 
 export const initialValues: InitialValues = {
-  voucherNo: '',
+  // voucherNo: '',
   accountHeadId: 0,
   amount: 0,
   paymentRef: '',
@@ -25,7 +25,7 @@ export const initialValues: InitialValues = {
   voucherDate: dayjs().format('YYYY-MM-DD'),
   projectId: 0,
   letterReferenceNo: '',
-  narration: '', 
+  narration: '',
   projectFiles: [],
   bank_id: ''
 };
@@ -33,7 +33,7 @@ export const initialValues: InitialValues = {
 export default initialValues;
 
 export const firstStepValidationSchema = Yup.object({
-  voucherNo: Yup.number().required('Voucher Number is required').min(1, 'Voucher Number Should be Greater than 0'),
+  // voucherNo: Yup.number().required('Voucher Number is required').min(1, 'Voucher Number Should be Greater than 0'),
   accountHeadId: Yup.number().required('Account Head is required').min(1, 'Please select a valid Account Head'),
   voucherDate: Yup.string().required('Voucher Date is required').default(dayjs().format('YYYY-MM-DD')),
   projectId: Yup.number().optional(),
@@ -46,7 +46,7 @@ export const firstStepValidationSchema = Yup.object({
 
 export const secondStepValidationSchema = Yup.object({
   paymentType: Yup.number().required('Payment Type is required').min(1, 'Please select a valid Payment Type'),
-  paymentRef: Yup.string().required('Payment Reference is required')
+  paymentRef: Yup.string().optional()
 });
 
 export const combinedValidationSchema = firstStepValidationSchema.concat(secondStepValidationSchema);
@@ -96,9 +96,10 @@ export const formateCreateBankVoucherPayload = async (values: InitialValues) => 
   return {
     business_id: 1,
     user_id: 1,
-    number: values.voucherNo + '/' + dayjs(values?.voucherDate).format('MM'),
+    // number: values.voucherNo + '/' + dayjs(values?.voucherDate).format('MM'),
     date: values.voucherDate,
-    project_id: values.projectId,
+    // project_id: values.projectId,
+    project_id: values.projectId === 0 ? null : values.projectId,
     // project_id: null,
     voucher_type_id: 1,
     account_head_id: values.accountHeadId,
@@ -108,7 +109,7 @@ export const formateCreateBankVoucherPayload = async (values: InitialValues) => 
     voucher_files: project_files,
     payment_type_id: values.paymentType,
     ref_number: values.paymentRef,
-    ledger_folio_number:0,
+    ledger_folio_number: 0,
     // project_financial_year_id: null,
     status_id: 0,
     bank_id: values.bank_id

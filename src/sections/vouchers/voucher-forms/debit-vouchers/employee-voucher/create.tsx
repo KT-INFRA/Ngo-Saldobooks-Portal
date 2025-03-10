@@ -60,7 +60,7 @@ export default function EmployeeVoucher() {
   const { accountHeads } = useGetAccountHead(["D", "B"]);
   const { employees } = useGetEmployeeList(true);
   const { bankListData, loading } = useGetOwnBankAccounts();
-  
+
 
   const { createVoucher, isLoading: isCreatingVoucher } = useCreateDebitVoucher(
     (response: any) => {
@@ -135,7 +135,7 @@ export default function EmployeeVoucher() {
         initialValues
       ).reduce((acc, key) => {
         if (key !== "items") {
-          acc[key as keyof Omit<InitialValues, "items"|"projectFiles">] = true;
+          acc[key as keyof Omit<InitialValues, "items" | "projectFiles">] = true;
         }
         return acc;
       }, {} as FormikTouched<InitialValues>);
@@ -149,7 +149,7 @@ export default function EmployeeVoucher() {
     actions: { resetForm: () => void }
   ) => {
     try {
-      const formatedValues =  await formateCreateVoucherPayload(values);
+      const formatedValues = await formateCreateVoucherPayload(values);
       // console.log('formatedValues1', formatedValues);
       if (formatedValues) {
         await createVoucher(formatedValues as any);
@@ -235,10 +235,11 @@ export default function EmployeeVoucher() {
                                     },
                                   }}
                                   onChange={(_e, project) => {
-                                    setFieldValue(
-                                      "projectId",
-                                      project?.value ?? ""
-                                    );
+                                    // setFieldValue(
+                                    //   "projectId",
+                                    //   project?.value ?? ""
+                                    // );
+                                    setFieldValue('projectId', project?.value ?? null);
                                   }}
                                   defaultValue={
                                     projects.find(
@@ -268,7 +269,7 @@ export default function EmployeeVoucher() {
                                   )}
                                 />
                               </Grid>
-                              
+
                               {/* Project Code */}
                             </Grid>
                           </Grid>
@@ -284,7 +285,7 @@ export default function EmployeeVoucher() {
                               ].map((field: any) => {
                                 return (
                                   <Grid item xs={12}>
-                                    <InputLabel sx={{ mb: 1}}>
+                                    <InputLabel sx={{ mb: 1 }}>
                                       {field.label}
                                     </InputLabel>
                                     <TextField
@@ -294,24 +295,24 @@ export default function EmployeeVoucher() {
                                       placeholder={`Enter ${field.label}`}
                                       value={
                                         values[
-                                          field.field as keyof typeof initialValues
+                                        field.field as keyof typeof initialValues
                                         ]
                                       }
                                       onChange={handleChange}
                                       onBlur={handleBlur}
                                       error={
                                         touched[
-                                          field.field as keyof typeof initialValues
+                                        field.field as keyof typeof initialValues
                                         ] &&
                                         Boolean(
                                           errors[
-                                            field.field as keyof typeof initialValues
+                                          field.field as keyof typeof initialValues
                                           ]
                                         )
                                       }
                                       helperText={
                                         touched[
-                                          field.field as keyof typeof initialValues
+                                        field.field as keyof typeof initialValues
                                         ] &&
                                         (errors[
                                           field.field as keyof typeof initialValues
@@ -347,19 +348,19 @@ export default function EmployeeVoucher() {
                           <Grid item xs={12} sm={6}>
                             <InputLabel sx={{ mb: 1 }}>Select Bank</InputLabel>
                             <Autocomplete
-                             sx={{
-                              '& .MuiInputBase-root': {
-                                height: '48px',
-                                minWidth: '250px',
-                                maxWidth: 'auto'
-                              },
-                              '& .MuiOutlinedInput-root': {
-                                padding: 0
-                              },
-                              '& .MuiAutocomplete-inputRoot': {
-                                padding: '0 14px'
-                              }
-                            }}
+                              sx={{
+                                '& .MuiInputBase-root': {
+                                  height: '48px',
+                                  minWidth: '250px',
+                                  maxWidth: 'auto'
+                                },
+                                '& .MuiOutlinedInput-root': {
+                                  padding: 0
+                                },
+                                '& .MuiAutocomplete-inputRoot': {
+                                  padding: '0 14px'
+                                }
+                              }}
                               value={bankListData.find((bank: { value: string; }) => bank.value === values.bank_id) || null}
                               onChange={(_e, bank) => {
                                 setFieldValue('bank_id', bank?.value ?? '');

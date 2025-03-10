@@ -54,7 +54,7 @@ export default function AddBankChargesVoucher() {
   const { projects } = useGetProjectList();
   const { accountHeads } = useGetAccountHead(["I"]);
   const { bankListData, loading } = useGetOwnBankAccounts();
-  
+
 
   const { createVoucher, isLoading: isCreatingVoucher } =
     useCreateBankChargesDebitVoucher(
@@ -130,7 +130,7 @@ export default function AddBankChargesVoucher() {
       const touchedProperties: FormikTouched<InitialValues> = Object.keys(
         initialValues
       ).reduce((acc, key) => {
-        acc[key as keyof  Omit<InitialValues, "items"|"projectFiles">] = true;
+        acc[key as keyof Omit<InitialValues, "items" | "projectFiles">] = true;
         return acc;
       }, {} as FormikTouched<InitialValues>);
 
@@ -159,14 +159,14 @@ export default function AddBankChargesVoucher() {
   };
 
   const isLastStep = activeStep === steps.length - 1;
-  
+
   return (
     <>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
-        >
+      >
         {(formikProps) => {
           const {
             values,
@@ -226,10 +226,11 @@ export default function AddBankChargesVoucher() {
                                     },
                                   }}
                                   onChange={(e, project) => {
-                                    setFieldValue(
-                                      "projectId",
-                                      project?.value ?? ""
-                                    );
+                                    // setFieldValue(
+                                    //   "projectId",
+                                    //   project?.value ?? ""
+                                    // );
+                                    setFieldValue('projectId', project?.value ?? null);
                                   }}
                                   defaultValue={
                                     projects.find(
@@ -260,7 +261,41 @@ export default function AddBankChargesVoucher() {
                                 />
                               </Grid>
                               {/* Project Code */}
-
+                              <Grid item xs={12} sm={6}>
+                                <InputLabel sx={{ mb: 1 }}>Select Bank</InputLabel>
+                                <Autocomplete
+                                  sx={{
+                                    '& .MuiInputBase-root': {
+                                      height: '48px',
+                                      minWidth: '250px',
+                                      maxWidth: 'auto'
+                                    },
+                                    '& .MuiOutlinedInput-root': {
+                                      padding: 0
+                                    },
+                                    '& .MuiAutocomplete-inputRoot': {
+                                      padding: '0 14px'
+                                    }
+                                  }}
+                                  value={bankListData.find((bank: { value: string; }) => bank.value === values.bank_id) || null}
+                                  onChange={(_e, bank) => {
+                                    setFieldValue('bank_id', bank?.value ?? '');
+                                  }}
+                                  isOptionEqualToValue={(option, value) => option?.value === value?.value}
+                                  options={bankListData}
+                                  getOptionLabel={(option) => option.label || ''}
+                                  loading={loading}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      name="bank_id"
+                                      placeholder="Select Bank"
+                                      error={touched.bank_id && Boolean(errors.bank_id)}
+                                      helperText={touched.bank_id && errors.bank_id}
+                                    />
+                                  )}
+                                />
+                              </Grid>
                               {/* Voucher Date */}
                               <Grid item xs={12} md={12}>
                                 <LocalizationProvider
@@ -285,7 +320,7 @@ export default function AddBankChargesVoucher() {
                               </Grid>
                               {/* Voucher Date */}
                               {/* Voucher Number */}
-                              <Grid item xs={12} md={12}>
+                              {/* <Grid item xs={12} md={12}>
                                 <InputLabel sx={{ mb: 1 }}>
                                   {"Voucher Number"}
                                 </InputLabel>
@@ -332,7 +367,7 @@ export default function AddBankChargesVoucher() {
                                     );
                                   }}
                                 </InputMask>
-                              </Grid>
+                              </Grid> */}
                             </Grid>
                             {/* </MainCard> */}
                           </Grid>
@@ -417,7 +452,7 @@ export default function AddBankChargesVoucher() {
                                 }) => {
                                   const value =
                                     values[
-                                      field.field as keyof typeof initialValues
+                                    field.field as keyof typeof initialValues
                                     ];
                                   return (
                                     <Grid item xl={12} xs={12} md={12}>
@@ -435,20 +470,20 @@ export default function AddBankChargesVoucher() {
                                         onBlur={handleBlur}
                                         error={
                                           touched[
-                                            field.field as keyof typeof initialValues
+                                          field.field as keyof typeof initialValues
                                           ] &&
                                           Boolean(
                                             errors[
-                                              field.field as keyof typeof initialValues
+                                            field.field as keyof typeof initialValues
                                             ]
                                           )
                                         }
                                         helperText={
                                           touched[
-                                            field.field as keyof typeof initialValues
+                                          field.field as keyof typeof initialValues
                                           ] &&
                                           errors[
-                                            field.field as keyof typeof initialValues
+                                          field.field as keyof typeof initialValues
                                           ]
                                         }
                                         fullWidth
@@ -479,41 +514,7 @@ export default function AddBankChargesVoucher() {
                               fullWidth
                             />
                           </Grid>
-                          <Grid item xs={12} sm={6}>
-                            <InputLabel sx={{ mb: 1 }}>Select Bank</InputLabel>
-                            <Autocomplete
-                             sx={{
-                              '& .MuiInputBase-root': {
-                                height: '48px',
-                                minWidth: '250px',
-                                maxWidth: 'auto'
-                              },
-                              '& .MuiOutlinedInput-root': {
-                                padding: 0
-                              },
-                              '& .MuiAutocomplete-inputRoot': {
-                                padding: '0 14px'
-                              }
-                            }}
-                              value={bankListData.find((bank: { value: string; }) => bank.value === values.bank_id) || null}
-                              onChange={(_e, bank) => {
-                                setFieldValue('bank_id', bank?.value ?? '');
-                              }}
-                              isOptionEqualToValue={(option, value) => option?.value === value?.value}
-                              options={bankListData}
-                              getOptionLabel={(option) => option.label || ''}
-                              loading={loading}
-                              renderInput={(params) => (
-                                <TextField
-                                  {...params}
-                                  name="bank_id"
-                                  placeholder="Select Bank"
-                                  error={touched.bank_id && Boolean(errors.bank_id)}
-                                  helperText={touched.bank_id && errors.bank_id}
-                                />
-                              )}
-                            />
-                          </Grid>
+
                         </Grid>
                       )}
                       {index === 1 && (

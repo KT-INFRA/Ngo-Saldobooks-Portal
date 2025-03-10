@@ -49,7 +49,7 @@ export default function AddBankInterestVoucher() {
   const { projects } = useGetProjectList();
   const { accountHeads } = useGetAccountHead(['I']);
   const { bankListData, loading } = useGetOwnBankAccounts();
-  
+
 
   const { createVoucher, isLoading: isCreatingVoucher } = useCreateBankInterestCreditVoucher(
     (response: any) => {
@@ -196,7 +196,8 @@ export default function AddBankInterestVoucher() {
                                     }
                                   }}
                                   onChange={(e, project) => {
-                                    setFieldValue('projectId', project?.value ?? '');
+                                    // setFieldValue('projectId', project?.value ?? '');
+                                    setFieldValue('projectId', project?.value ?? null)
                                   }}
                                   defaultValue={projects.find((project) => project.value === values.projectId) ?? null}
                                   isOptionEqualToValue={(option, value) => option.value === value.value}
@@ -215,7 +216,41 @@ export default function AddBankInterestVoucher() {
                                 />
                               </Grid>
                               {/* Project Code */}
-
+                              <Grid item xs={12} md={12}>
+                                <InputLabel sx={{ mb: 1 }}>Select Bank</InputLabel>
+                                <Autocomplete
+                                  sx={{
+                                    '& .MuiInputBase-root': {
+                                      height: '48px',
+                                      minWidth: '250px',
+                                      maxWidth: 'auto'
+                                    },
+                                    '& .MuiOutlinedInput-root': {
+                                      padding: 0
+                                    },
+                                    '& .MuiAutocomplete-inputRoot': {
+                                      padding: '0 14px'
+                                    }
+                                  }}
+                                  value={bankListData.find((bank: { value: string; }) => bank.value === values.bank_id) || null}
+                                  onChange={(_e, bank) => {
+                                    setFieldValue('bank_id', bank?.value ?? '');
+                                  }}
+                                  isOptionEqualToValue={(option, value) => option?.value === value?.value}
+                                  options={bankListData}
+                                  getOptionLabel={(option) => option.label || ''}
+                                  loading={loading}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      name="bank_id"
+                                      placeholder="Select Bank"
+                                      error={touched.bank_id && Boolean(errors.bank_id)}
+                                      helperText={touched.bank_id && errors.bank_id}
+                                    />
+                                  )}
+                                />
+                              </Grid>
                               {/* Voucher Date */}
                               <Grid item xs={12} md={12}>
                                 <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -233,7 +268,7 @@ export default function AddBankInterestVoucher() {
                               </Grid>
                               {/* Voucher Date */}
                               {/* Voucher Number */}
-                              <Grid item xs={12} md={12}>
+                              {/* <Grid item xs={12} md={12}>
                                 <InputLabel sx={{ mb: 1 }}>{'Voucher Number'}</InputLabel>
                                 <InputMask
                                   mask={`999`}
@@ -266,7 +301,7 @@ export default function AddBankInterestVoucher() {
                                     );
                                   }}
                                 </InputMask>
-                              </Grid>
+                              </Grid> */}
                             </Grid>
                             {/* </MainCard> */}
                           </Grid>
@@ -369,41 +404,7 @@ export default function AddBankInterestVoucher() {
                               fullWidth
                             />
                           </Grid>
-                          <Grid item xs={12} sm={6}>
-                                <InputLabel sx={{ mb: 1 }}>Select Bank</InputLabel>
-                                <Autocomplete
-                                  sx={{
-                                    '& .MuiInputBase-root': {
-                                      height: '48px',
-                                      minWidth: '250px',
-                                      maxWidth: 'auto'
-                                    },
-                                    '& .MuiOutlinedInput-root': {
-                                      padding: 0
-                                    },
-                                    '& .MuiAutocomplete-inputRoot': {
-                                      padding: '0 14px'
-                                    }
-                                  }}
-                                  value={bankListData.find((bank: { value: string; }) => bank.value === values.bank_id) || null}
-                                  onChange={(_e, bank) => {
-                                    setFieldValue('bank_id', bank?.value ?? '');
-                                  }}
-                                  isOptionEqualToValue={(option, value) => option?.value === value?.value}
-                                  options={bankListData}
-                                  getOptionLabel={(option) => option.label || ''}
-                                  loading={loading}
-                                  renderInput={(params) => (
-                                    <TextField
-                                      {...params}
-                                      name="bank_id"
-                                      placeholder="Select Bank"
-                                      error={touched.bank_id && Boolean(errors.bank_id)}
-                                      helperText={touched.bank_id && errors.bank_id}
-                                    />
-                                  )}
-                                />
-                              </Grid>
+
                         </Grid>
                       )}
                       {index === 1 && (

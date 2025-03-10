@@ -50,12 +50,13 @@ export const firstStepValidationSchema = Yup.object({
   tds: Yup.number(),
   // gst: Yup.number().required('GST is required').min(1, 'Please select a valid GST'),
   gst: Yup.number(),
-  projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
+  // projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
+  projectId: Yup.number().optional(),
   bank_id: Yup.string().required('Bank ID is required'),
   // letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
-  // narration: Yup.string().required('Narration is required')
+  narration: Yup.string().required('Narration is required'),
   letterReferenceNo: Yup.string().optional(),
-  narration: Yup.string().optional(),
+  // narration: Yup.string().optional(),
   
 });
 
@@ -190,7 +191,8 @@ export const formateCreateVoucherPayload = async ({
     voucher_category_id: 0,
     status_id: 0,
     user_id: 1,
-    project_id: values.projectId,
+    project_id: values.projectId === 0 ? null : values.projectId,
+    // project_id: values.projectId,
     letter_ref_no: values.letterReferenceNo,
     narration: values.narration,
     receiver_type_id: 2, // for vendor,
