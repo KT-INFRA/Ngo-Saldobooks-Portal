@@ -10,7 +10,7 @@ interface Item {
 }
 
 export interface InitialValues {
-  voucherNo: string;
+  // voucherNo: string;
   paymentType: number;
   paymentRef: string;
   voucherDate: string;
@@ -28,7 +28,7 @@ export type FormValues = {
 };
 
 export const initialValues: InitialValues = {
-  voucherNo: '',
+  // voucherNo: '',
   paymentType: 0,
   paymentRef: '',
   voucherDate: dayjs().format('YYYY-MM-DD'),
@@ -50,7 +50,7 @@ export const initialValues: InitialValues = {
 export default initialValues;
 
 export const firstStepValidationSchema = Yup.object({
-  voucherNo: Yup.number().required('Voucher Number is required').min(1, 'Voucher Number Should be Greater than 0'),
+  // voucherNo: Yup.number().required('Voucher Number is required').min(1, 'Voucher Number Should be Greater than 0'),
   paymentType: Yup.number().required('Payment Type is required').min(1, 'Please select a valid Payment Type'),
   paymentRef: Yup.string().required('Payment Reference is required'),
   voucherDate: Yup.string().required('Voucher Date is required').default(dayjs().format('YYYY-MM-DD')),
@@ -117,7 +117,7 @@ export const formateCreateVoucherPayload = async (values: InitialValues) => {
   return {
     business_id: 1,
     user_id: 1,
-    number: values.voucherNo + '/' + dayjs(values?.voucherDate).format('MM'),
+    // number: values.voucherNo + '/' + dayjs(values?.voucherDate).format('MM'),
     date: values.voucherDate,
     project_id: values.projectId,
     letter_ref_no: values.letterReferenceNo,

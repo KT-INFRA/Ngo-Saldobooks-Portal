@@ -69,7 +69,7 @@ export default function AddOtherSourceVoucher() {
   const { projects } = useGetProjectList();
   const { accountHeads } = useGetAccountHead(["C", "B"]);
   const { bankListData, loading } = useGetOwnBankAccounts();
-  
+
   const { createVoucher, isLoading: isCreatingVoucher } =
     useCreateOtherSourceCreditVoucher(
       (response: any) => {
@@ -144,7 +144,7 @@ export default function AddOtherSourceVoucher() {
         initialValues
       ).reduce((acc, key) => {
         if (key !== "items") {
-          acc[key as keyof Omit<InitialValues, "items"|"projectFiles">] = true;
+          acc[key as keyof Omit<InitialValues, "items" | "projectFiles">] = true;
         }
         return acc;
       }, {} as FormikTouched<InitialValues>);
@@ -159,7 +159,7 @@ export default function AddOtherSourceVoucher() {
   ) => {
     try {
       const formatedValues = await formateCreateVoucherPayload(values);
-      
+
       if (formatedValues) {
         await createVoucher(formatedValues as any);
         setActiveStep(0);
@@ -302,8 +302,43 @@ export default function AddOtherSourceVoucher() {
                                 </LocalizationProvider>
                               </Grid>
                               {/* Voucher Date */}
+                              <Grid item xs={12} sm={6}>
+                            <InputLabel sx={{ mb: 1 }}>Select Bank</InputLabel>
+                            <Autocomplete
+                              sx={{
+                                '& .MuiInputBase-root': {
+                                  height: '48px',
+                                  minWidth: '250px',
+                                  maxWidth: 'auto'
+                                },
+                                '& .MuiOutlinedInput-root': {
+                                  padding: 0
+                                },
+                                '& .MuiAutocomplete-inputRoot': {
+                                  padding: '0 14px'
+                                }
+                              }}
+                              value={bankListData.find((bank: { value: string; }) => bank.value === values.bank_id) || null}
+                              onChange={(_e, bank) => {
+                                setFieldValue('bank_id', bank?.value ?? '');
+                              }}
+                              isOptionEqualToValue={(option, value) => option?.value === value?.value}
+                              options={bankListData}
+                              getOptionLabel={(option) => option.label || ''}
+                              loading={loading}
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  name="bank_id"
+                                  placeholder="Select Bank"
+                                  error={touched.bank_id && Boolean(errors.bank_id)}
+                                  helperText={touched.bank_id && errors.bank_id}
+                                />
+                              )}
+                            />
+                          </Grid>
                               {/* Voucher Number */}
-                              <Grid item xs={12} md={12}>
+                              {/* <Grid item xs={12} md={12}>
                                 <InputLabel sx={{ mb: 1 }}>
                                   {"Voucher Number"}
                                 </InputLabel>
@@ -350,11 +385,11 @@ export default function AddOtherSourceVoucher() {
                                     );
                                   }}
                                 </InputMask>
-                              </Grid>
+                              </Grid> */}
                               {/* Voucher Number */}
                             </Grid>
                           </Grid>
-                          
+
 
                           <Grid item xs={12} sm={6} p={2}>
                             <Grid container direction="column" spacing={1}>
@@ -384,24 +419,24 @@ export default function AddOtherSourceVoucher() {
                                       placeholder={`Enter ${field.label}`}
                                       value={
                                         values[
-                                          field.field as keyof typeof initialValues
+                                        field.field as keyof typeof initialValues
                                         ]
                                       }
                                       onChange={handleChange}
                                       onBlur={handleBlur}
                                       error={
                                         touched[
-                                          field.field as keyof typeof initialValues
+                                        field.field as keyof typeof initialValues
                                         ] &&
                                         Boolean(
                                           errors[
-                                            field.field as keyof typeof initialValues
+                                          field.field as keyof typeof initialValues
                                           ]
                                         )
                                       }
                                       helperText={
                                         touched[
-                                          field.field as keyof typeof initialValues
+                                        field.field as keyof typeof initialValues
                                         ] &&
                                         (errors[
                                           field.field as keyof typeof initialValues
@@ -467,41 +502,6 @@ export default function AddOtherSourceVoucher() {
                               fullWidth
                             />
                           </Grid>
-                          <Grid item xs={12} sm={6} p={2} mt={-2}>
-                                <InputLabel sx={{ mb: 1 }}>Select Bank</InputLabel>
-                                <Autocomplete
-                                  sx={{
-                                    '& .MuiInputBase-root': {
-                                      height: '48px',
-                                      minWidth: '250px',
-                                      maxWidth: 'auto'
-                                    },
-                                    '& .MuiOutlinedInput-root': {
-                                      padding: 0
-                                    },
-                                    '& .MuiAutocomplete-inputRoot': {
-                                      padding: '0 14px'
-                                    }
-                                  }}
-                                  value={bankListData.find((bank: { value: string; }) => bank.value === values.bank_id) || null}
-                                  onChange={(_e, bank) => {
-                                    setFieldValue('bank_id', bank?.value ?? '');
-                                  }}
-                                  isOptionEqualToValue={(option, value) => option?.value === value?.value}
-                                  options={bankListData}
-                                  getOptionLabel={(option) => option.label || ''}
-                                  loading={loading}
-                                  renderInput={(params) => (
-                                    <TextField
-                                      {...params}
-                                      name="bank_id"
-                                      placeholder="Select Bank"
-                                      error={touched.bank_id && Boolean(errors.bank_id)}
-                                      helperText={touched.bank_id && errors.bank_id}
-                                    />
-                                  )}
-                                />
-                              </Grid>
                         </Grid>
                       )}
                       {index === 1 && (

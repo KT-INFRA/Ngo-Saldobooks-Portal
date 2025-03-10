@@ -197,7 +197,8 @@ export default function JRFFellowshipVoucher() {
                                     }
                                   }}
                                   onChange={(_e, project) => {
-                                    setFieldValue('projectId', project?.value ?? '');
+                                    // setFieldValue('projectId', project?.value ?? '');
+                                    setFieldValue('projectId', project?.value ?? null);
                                   }}
                                   defaultValue={projects.find((project) => project.value === values.projectId) ?? null}
                                   isOptionEqualToValue={(option, value) => option.value === value.value}

@@ -206,7 +206,7 @@ export default function AddFundingAgencyVoucher() {
                                     }
                                   }}
                                   onChange={(_e, project) => {
-                                    setFieldValue('projectId', project?.value ?? '');
+                                    setFieldValue('projectId', project?.value ?? null);
                                   }}
                                   defaultValue={projects.find((project) => project.value === values.projectId) ?? null}
                                   isOptionEqualToValue={(option, value) => option.value === value.value}
@@ -259,7 +259,7 @@ export default function AddFundingAgencyVoucher() {
                                   )}
                                 />
                               </Grid>
-                              
+
                               {/* Voucher Date */}
                               <Grid item xs={12} md={12}>
                                 <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -277,7 +277,7 @@ export default function AddFundingAgencyVoucher() {
                               </Grid>
                               {/* Voucher Date */}
                               {/* Voucher Number */}
-                              <Grid item xs={12} md={12}>
+                              {/* <Grid item xs={12} md={12}>
                                 <InputLabel sx={{ mb: 1 }}>{'Voucher Number'}</InputLabel>
                                 <InputMask
                                   mask={`999`}
@@ -310,7 +310,7 @@ export default function AddFundingAgencyVoucher() {
                                     );
                                   }}
                                 </InputMask>
-                              </Grid>
+                              </Grid> */}
                               {/* Voucher Number */}
 
                               <Grid item xs={12} md={6}>

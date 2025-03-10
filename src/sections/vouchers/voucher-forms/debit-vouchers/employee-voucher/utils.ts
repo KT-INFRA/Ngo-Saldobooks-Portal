@@ -41,7 +41,8 @@ export const initialValues: InitialValues = {
 };
 
 export const firstStepValidationSchema = Yup.object({
-  projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
+  // projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
+  projectId: Yup.number().optional(),
   // letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
   letterReferenceNo: Yup.string().optional(),
   narration: Yup.string().required('Narration is required'),
@@ -108,7 +109,8 @@ export const formateCreateVoucherPayload = async (values: InitialValues) => {
   return {
     business_id: 1,
     user_id: 1,
-    project_id: values.projectId,
+    // project_id: values.projectId,
+    project_id: values.projectId === 0 ? null : values.projectId,
     letter_ref_no: values.letterReferenceNo,
     narration: values.narration,
     receiver_type_id: 1, // for Employee

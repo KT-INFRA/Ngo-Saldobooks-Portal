@@ -10,7 +10,7 @@ interface Item {
 }
 
 export interface InitialValues {
-  voucherNo: string;
+  // voucherNo: string;
   paymentType: number;
   paymentRef: string;
   voucherDate: string;
@@ -29,7 +29,7 @@ export type FormValues = {
 };
 
 export const initialValues: InitialValues = {
-  voucherNo: '',
+  // voucherNo: '',
   donor_type_id: 0,
   paymentType: 0,
   paymentRef: '',
@@ -37,7 +37,7 @@ export const initialValues: InitialValues = {
   projectId: 0,
   letterReferenceNo: '',
   narration: '',
-  projectFiles: [],  
+  projectFiles: [],
   bank_id: '',
   items: [
     {
@@ -52,16 +52,16 @@ export const initialValues: InitialValues = {
 export default initialValues;
 
 export const firstStepValidationSchema = Yup.object({
-  voucherNo: Yup.number().required('Voucher Number is required').min(1, 'Voucher Number Should be Greater than 0'),
-  
+  // voucherNo: Yup.number().required('Voucher Number is required').min(1, 'Voucher Number Should be Greater than 0'),
+
   paymentType: Yup.number().required('Payment Type is required').min(1, 'Please select a valid Payment Type'),
-  paymentRef: Yup.string().required('Payment Reference is required'),
+  paymentRef: Yup.string().optional(),
   voucherDate: Yup.string().required('Voucher Date is required').default(dayjs().format('YYYY-MM-DD')),
-  projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
+  projectId: Yup.number().optional(),
   // letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
   letterReferenceNo: Yup.string().optional(),
   narration: Yup.string().required('Narration is required'),
-  bank_id: Yup.string().optional(),
+  bank_id: Yup.string().required('Bank is required'),
 });
 
 export const secondStepValidationSchema = Yup.object({
@@ -124,9 +124,9 @@ export const formateCreateVoucherPayload = async (values: InitialValues) => {
   return {
     business_id: 1,
     user_id: 1,
-    number: values.voucherNo + '/' + dayjs(values?.voucherDate).format('MM'),
+    // number: values.voucherNo + '/' + dayjs(values?.voucherDate).format('MM'),
     date: values.voucherDate,
-    project_id: values.projectId,
+    project_id: values.projectId === 0 ? null : values.projectId,
     letter_ref_no: values.letterReferenceNo,
     narration: values.narration,
     ledger_folio_number: 0,
@@ -134,7 +134,7 @@ export const formateCreateVoucherPayload = async (values: InitialValues) => {
     receiver_type_id: 0,
     voucher_type_id: 0,
     voucher_category_id: 0,
-    status_id:0,
+    status_id: 0,
     bank_id: values.bank_id,
     items: values.items.map((item, index) => ({
       ordinal: index + 1,
@@ -144,7 +144,7 @@ export const formateCreateVoucherPayload = async (values: InitialValues) => {
       payment_type_id: values.paymentType,
       ref_number: values.paymentRef,
       item_id: item.id,
-      donor_id : values.donor_type_id,
+      donor_id: values.donor_type_id,
     })),
     voucher_files: project_files
   };
