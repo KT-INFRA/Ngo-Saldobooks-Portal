@@ -14,6 +14,9 @@ export interface InitialValues {
   narration: string;
   projectFiles?: File[];
   bank_id?: string;
+  purpose: string;
+  paymenttypeid: number;
+  paymentref: string;
 }
 
 export const initialValues: InitialValues = {
@@ -27,7 +30,10 @@ export const initialValues: InitialValues = {
   letterReferenceNo: '',
   narration: '',
   projectFiles: [],
-  bank_id: ''
+  bank_id: '',
+  purpose: '',
+  paymenttypeid: 0,
+  paymentref: ''
 };
 
 export default initialValues;
@@ -39,7 +45,7 @@ export const firstStepValidationSchema = Yup.object({
   // projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
   projectId: Yup.number().optional(),
   // letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
-  letterReferenceNo: Yup.string().optional(), 
+  letterReferenceNo: Yup.string().optional(),
   narration: Yup.string().required('Narration is required'),
   amount: Yup.number().required('Amount is required').min(1, 'Amount must be greater than 0'),
   bank_id: Yup.string().optional()
@@ -98,16 +104,19 @@ export const formateCreateBankVoucherPayload = async (values: InitialValues) => 
     // number: values.voucherNo + '/' + dayjs(values?.voucherDate).format('MM'),
     date: values.voucherDate,
     // project_id: values.projectId,
-    project_id: values.projectId === 0 ? null : values.projectId,
     voucher_type_id: 1,
-    receiver_type_id: 1,
-    account_head_id: values.accountHeadId,
+    project_id: values.projectId === 0 ? null : values.projectId,
     letter_ref_no: values.letterReferenceNo,
     narration: values.narration,
-    amount: values.amount,
-    payment_type_id: values.paymentType,
-    ref_number: values.paymentRef,
+    bank_id: values.bank_id,
+    items: {
+      amount: values.amount,
+      account_head_id: values.accountHeadId,
+      purpose: values.purpose,
+      payment_type_id: values.paymentType,
+      ref_number: values.paymentRef,
+      ordinal: 0
+    },
     voucher_files: project_files,
-    bank_id: values.bank_id
   };
 };
