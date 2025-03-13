@@ -2,18 +2,28 @@ import { mimeTypes } from 'data/mimes';
 import dayjs from 'dayjs';
 import * as Yup from 'yup';
 
+interface Item {
+  amount: number;
+  account_head_id: number;
+  purpose: string;
+  payment_type_id: number;
+  ref_number: string;
+  ordinal: number;
+}
+
 export interface InitialValues {
   // voucherNo: string;
-  accountHeadId: number;
-  amount: number;
-  paymentType: number;
-  paymentRef: string;
   voucherDate: string;
   projectId: number;
   letterReferenceNo: string;
   narration: string;
-  projectFiles?: File[];
   bank_id?: string;
+  accountHeadId: number;
+  amount: number;
+  purpose: string;
+  paymentRef: string;
+  paymentType: number;
+  projectFiles?: File[];
 }
 
 export const initialValues: InitialValues = {
@@ -26,8 +36,9 @@ export const initialValues: InitialValues = {
   projectId: 0,
   letterReferenceNo: '',
   narration: '',
+  bank_id: '',
+  purpose: '',
   projectFiles: [],
-  bank_id: ''
 };
 
 export default initialValues;
@@ -96,24 +107,19 @@ export const formateCreateBankVoucherPayload = async (values: InitialValues) => 
   return {
     business_id: 1,
     user_id: 1,
-    // number: values.voucherNo + '/' + dayjs(values?.voucherDate).format('MM'),
     date: values.voucherDate,
-    // project_id: values.projectId,
     project_id: values.projectId === 0 ? null : values.projectId,
-    // project_id: null,
-    voucher_type_id: 1,
-    account_head_id: values.accountHeadId,
     letter_ref_no: values.letterReferenceNo,
     narration: values.narration,
-    amount: values.amount,
-    voucher_files: project_files,
-    payment_type_id: values.paymentType,
-    ref_number: values.paymentRef,
-    ledger_folio_number: 0,
-    // project_financial_year_id: null,
-    status_id: 0,
-    bank_id: values.bank_id
-
+    voucher_type_id: 1,
+    bank_id: values.bank_id,
+    items: {
+      account_head_id: values.accountHeadId,
+      amount: values.amount,
+      payment_type_id: values.paymentType,
+      ref_number: values.paymentRef,
+      ordinal: 1,
+    }
   };
 };
 
