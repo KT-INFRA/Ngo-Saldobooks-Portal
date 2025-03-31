@@ -3,79 +3,61 @@ import dayjs from 'dayjs';
 import * as Yup from 'yup';
 
 interface Item {
-  id: number;
-  name: string;
-  account_head_id: number;
   amount: number;
+  account_head_id: number;
+  purpose: string;
+  payment_type_id: number;
+  ref_number: string;
+  ordinal: number;
 }
 
 export interface InitialValues {
   // voucherNo: string;
-  paymentType: number;
-  paymentRef: string;
   voucherDate: string;
   projectId: number;
-  letterReferenceNo: string;
+  letterReferenceNo: number;
   narration: string;
-  projectFiles: File[];
-  items: Item[];
-  donor_type_id: number;
-  bank_id: string;
+  bank_id?: number;
+  accountHeadId: number;
+  amount: number;
+  purpose: string;
+  paymentRef: string;
+  paymentType: number;
+  projectFiles?: File[];
 }
-
-export type FormValues = {
-  // Define your form values type here
-  [key: string]: any;
-};
 
 export const initialValues: InitialValues = {
   // voucherNo: '',
-  donor_type_id: 0,
-  paymentType: 0,
+  accountHeadId: 0,
+  amount: 0,
   paymentRef: '',
+  paymentType: 0,
   voucherDate: dayjs().format('YYYY-MM-DD'),
   projectId: 0,
-  letterReferenceNo: '',
+  letterReferenceNo: 0,
   narration: '',
+  bank_id: 0,
+  purpose: '',
   projectFiles: [],
-  bank_id: '',
-  items: [
-    {
-      id: 1,
-      name: '',
-      account_head_id: 0,
-      amount: 0
-    }
-  ]
 };
 
 export default initialValues;
 
 export const firstStepValidationSchema = Yup.object({
   // voucherNo: Yup.number().required('Voucher Number is required').min(1, 'Voucher Number Should be Greater than 0'),
-
-  paymentType: Yup.number().required('Payment Type is required').min(1, 'Please select a valid Payment Type'),
-  paymentRef: Yup.string().optional(),
+  accountHeadId: Yup.number().required('Account Head is required').min(1, 'Please select a valid Account Head'),
   voucherDate: Yup.string().required('Voucher Date is required').default(dayjs().format('YYYY-MM-DD')),
   projectId: Yup.number().optional(),
   // letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
   letterReferenceNo: Yup.string().optional(),
   narration: Yup.string().required('Narration is required'),
-  bank_id: Yup.string().required('Bank is required'),
+  amount: Yup.number().required('Amount is required').min(1, 'Amount must be greater than 0'),
+  bank_id: Yup.string().required('Bank is required')
 });
 
 export const secondStepValidationSchema = Yup.object({
-  items: Yup.array()
-    .of(
-      Yup.object().shape({
-        // name: Yup.string().required('Item Name is required'),
-        name: Yup.string().optional(),
-        // account_head_id: Yup.number().required('Account Head ID is required').min(1, 'Please select a valid Account Head ID'),
-        account_head_id: Yup.string().optional(),
-        amount: Yup.number().required('Amount is required').min(1, 'Amount must be greater than 0')
-      })
-    )
-    .min(1, 'At least one item is required')
+  paymentType: Yup.number().required('Payment Type is required').min(1, 'Please select a valid Payment Type'),
+  paymentRef: Yup.string().optional()
 });
 
 export const combinedValidationSchema = firstStepValidationSchema.concat(secondStepValidationSchema);
@@ -119,26 +101,27 @@ async function getProjectFilesBase64(files: File[]): Promise<FileObject[]> {
   return Promise.all(promises);
 }
 
-export const formateCreateVoucherPayload = async (values: InitialValues) => {
-  const project_files: FileObject[] = await getProjectFilesBase64(values.projectFiles);
+
+export const formateCreateBankVoucherPayload = async (values: InitialValues) => {
+  const project_files: FileObject[] = await getProjectFilesBase64(values.projectFiles!);
   return {
     business_id: 1,
     user_id: 1,
-    // number: values.voucherNo + '/' + dayjs(values?.voucherDate).format('MM'),
     date: values.voucherDate,
     project_id: values.projectId === 0 ? null : values.projectId,
     letter_ref_no: values.letterReferenceNo,
     narration: values.narration,
     bank_id: values.bank_id,
-    items: values.items.map((item, index) => ({
-      ordinal: index + 1,
-      amount: item.amount,
-      account_head_id: item.account_head_id,
-      purpose: item.name,
+    items: {
+      account_head_id: values.accountHeadId,
+      amount: values.amount,
+      purpose: values.purpose,
       payment_type_id: values.paymentType,
       ref_number: values.paymentRef,
-      donor_id: values.donor_type_id,
-    })),
-    voucher_files: project_files
+      ordinal: 1,
+    },
+    voucher_files: null
   };
 };
+
+

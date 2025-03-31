@@ -504,6 +504,19 @@ export const useCreateJRFDebitVoucher = (onSuccess = (data: any) => { }, onError
   };
 };
 
+export const useCreateDebitVoucherGeneral = (onSuccess = (data: any) => { }, onError = (error: any) => { }) => {
+  const { data, mutateAsync, isPending } = useMutation({
+    mutationFn: async (payload: any) => axiosServices.post(`/main/create/debit/voucher/for/general/`, payload),
+    onSuccess: (data) => onSuccess(data?.data),
+    onError: onError
+  });
+  return {
+    data,
+    isLoading: isPending,
+    createVoucher: mutateAsync
+  };
+};
+
 export const useCreatePTPDebitVoucher = (onSuccess = (data: any) => { }, onError = (error: any) => { }) => {
   const { data, mutateAsync, isPending } = useMutation({
     mutationFn: async (payload: any) => axiosServices.post(`main/create/project/voucher/`, payload),
@@ -553,6 +566,21 @@ export const useGetCreditVoucherPdf = (onSuccess = (data: any) => { }, onError =
     getCreditVoucherPdf: mutateAsync
   };
 };
+
+export const useGetCreditReceiptPdf = (onSuccess = (data: any) => { }, onError = (error: any) => { }) => {
+  const { data, mutateAsync, isPending } = useMutation({
+    mutationFn: async (payload: any) => axiosServices.post(`/main/generate/credit/receipt`, payload),
+    onSuccess: (data) => onSuccess(data?.data),
+    onError: onError
+  });
+  return {
+    data,
+    isLoadingReceipt: isPending,
+    getCreditReceiptPdf: mutateAsync
+  };
+};
+
+
 export const useGetJournalVoucherPdf = (onSuccess = (data: any) => { }, onError = (error: any) => { }) => {
   const { data, mutateAsync, isPending } = useMutation({
     mutationFn: async (payload: any) => axiosServices.post(`/main/generate/journal/voucher`, payload),

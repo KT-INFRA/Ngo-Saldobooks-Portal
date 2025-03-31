@@ -81,7 +81,13 @@ export const VoucherTypes: IVoucherType[] = [
         id: 6,
         name: 'Debit Voucher for Bank-Charges',
         hasAccess: getPermission(SubModuleButtonEnum.Accounts.CreateVoucher.DebitVoucherForBankCharges)?.access
-      }
+      },
+      {
+        id: 7,
+        name: 'Debit Voucher for General',
+        hasAccess: getPermission(SubModuleButtonEnum.Accounts.CreateVoucher.DebitVoucherForGeneral)?.access
+      },
+
     ]
   },
   {

@@ -58,6 +58,7 @@ export const SubModuleButtonEnum = {
     CreateVoucher: {
       CreditVoucherForOtherSource: 41,
       DebitVoucherForBankCharges: 39,
+      DebitVoucherForGeneral: 65,
       SettleAdvance: 13,
       CreditVoucherForBankInterest: 7,
       DebitVoucherForBankInterestTransfer: 11,

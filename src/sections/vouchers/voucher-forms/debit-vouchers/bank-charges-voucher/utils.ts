@@ -102,12 +102,13 @@ export const formateCreateBankVoucherPayload = async (values: InitialValues) => 
     business_id: 1,
     user_id: 1,
     // number: values.voucherNo + '/' + dayjs(values?.voucherDate).format('MM'),
+    number: "007/08",
     date: values.voucherDate,
     // project_id: values.projectId,
-    voucher_type_id: 1,
     project_id: values.projectId === 0 ? null : values.projectId,
     letter_ref_no: values.letterReferenceNo,
     narration: values.narration,
+    voucher_type_id: 1,
     bank_id: values.bank_id,
     items: {
       amount: values.amount,
@@ -115,7 +116,7 @@ export const formateCreateBankVoucherPayload = async (values: InitialValues) => 
       purpose: values.purpose,
       payment_type_id: values.paymentType,
       ref_number: values.paymentRef,
-      ordinal: 0
+      ordinal: 1
     },
     voucher_files: project_files,
   };

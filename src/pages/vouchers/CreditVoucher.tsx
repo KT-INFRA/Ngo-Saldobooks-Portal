@@ -51,14 +51,16 @@ import { HeaderSort, RowSelection } from 'components/third-party/react-table';
 import { useFormik } from 'formik';
 import VoucherModel from 'sections/vouchers/VoucherModel';
 import AlertCreditVoucherDelete from 'sections/vouchers/AlertCreditVoucherDelete';
-import { useGetProjectList, useGetCreditVoucherPdf, useGetCreditVouchers, useGetPaymentType, useGetFinancialYear } from 'api/voucher';
+import { useGetProjectList, useGetCreditVoucherPdf, useGetCreditVouchers, useGetPaymentType, useGetFinancialYear, useGetCreditReceiptPdf } from 'api/voucher';
 import useDownlader from 'react-use-downloader';
 import { currentFinancialYear } from 'pages/vouchers/utils';
 // types
 import { CreditvoucherList } from 'types/customer';
 // assets
-import { Edit, Eye, Trash } from 'iconsax-react';
+import { Edit, Eye, Trash, Note1 } from 'iconsax-react';
 import VoucherPdfPreview from 'sections/vouchers/VoucherPdfPreview';
+import ReceiptPdfPreview from 'sections/vouchers/ReceiptPdfPreview';
+
 import storage from 'utils/storage';
 import { UserProfile } from 'types/auth';
 const { business_id }: UserProfile = storage.getItem('user');
@@ -167,8 +169,8 @@ function ReactTable({ data, columns, loading }: Props) {
                           onClick={header.column.getToggleSortingHandler()}
                           {...(header.column.getCanSort() &&
                             header.column.columnDef.meta === undefined && {
-                              className: 'cursor-pointer prevent-select'
-                            })}
+                            className: 'cursor-pointer prevent-select'
+                          })}
                         >
                           {header.isPlaceholder ? null : (
                             <Stack direction="row" spacing={1} alignItems="center">
@@ -217,20 +219,35 @@ export default function CrdeditVoucherListPage() {
     setOpenAlert(!openAlert);
   };
   const [open, setOpen] = useState<boolean>(false);
+  const [openReceipt, setOpenReceipt] = useState<boolean>(false);
   const [voucherDeleteId, setVoucherDeleteId] = useState<any>('');
   const [voucherDeleteDate, setVoucherDeleteDate] = useState<any>('');
   const [voucherDeleteNumber, setVoucherDeleteNumber] = useState<any>('');
   const [voucherPdf, setVoucherPdf] = useState<any>('');
+  const [receiptPdf, setReceiptPdf] = useState<any>('');
   const [selectedVoucherId, setSelectedVoucherId] = useState<number>(0);
   const [selectedVoucherData, setSelectedVoucherData] = useState<any>({});
   const [selectedVoucherIdPdf, setSelectedVoucherIdPdf] = useState<number>(0);
+  const [selectedReceiptIdPdf, setSelectedReceiptIdPdf] = useState<number>(0);
   const { download, isInProgress, percentage } = useDownlader();
+
   const handleClose = () => {
     setOpen(false);
     setSelectedVoucherIdPdf(0);
+    setOpenReceipt(false);
+    setSelectedReceiptIdPdf(0);
   };
+
   const handleDownload = () => {
     download(voucherPdf, selectedVoucherIdPdf + '.pdf');
+  };
+
+  const handlereceiptClose = () => {
+    setOpen(false);
+    setSelectedReceiptIdPdf(0);
+  };
+  const handlereceiptDownload = () => {
+    download(receiptPdf, selectedReceiptIdPdf + '.pdf');
   };
 
   // --------------------------FORMIK VALUE-------------------------------------
@@ -279,11 +296,29 @@ export default function CrdeditVoucherListPage() {
     selectedVoucherIdPdf && handlePdfPrint(Number(selectedVoucherIdPdf));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedVoucherIdPdf]);
+  useEffect(() => {
+    selectedReceiptIdPdf && handleReceiptPdfPrint(Number(selectedReceiptIdPdf));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedReceiptIdPdf]);
   const handlePdfPrint = async (selectedVoucherId: number) => {
     const formatedValues = { voucher_id: selectedVoucherId, b: business_id };
     await getCreditVoucherPdf(formatedValues as any);
   };
+  const handleReceiptPdfPrint = async (selectedVoucherId: number) => {
+    const formatedValues = { voucher_id: selectedVoucherId, business_id: business_id };
+    await getCreditReceiptPdf(formatedValues as any);
+  };
   const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClickOpenReceipt = () => {
+    setOpenReceipt(true);
+  };
+  // const handlereceiptpdfprint = async (selectedVoucherId: number) => {
+  //   const formatedValues = { voucher_id: selectedVoucherId, b: business_id };
+  //   await getCreditReceiptPdf(formatedValues as any);
+  // };
+  const handlereceiptClickOpen = () => {
     setOpen(true);
   };
   const { getCreditVoucherPdf, isLoading } = useGetCreditVoucherPdf(
@@ -296,7 +331,19 @@ export default function CrdeditVoucherListPage() {
         handleClickOpen();
       }
     },
-    () => {}
+    () => { }
+  );
+  const { getCreditReceiptPdf, isLoadingReceipt } = useGetCreditReceiptPdf(
+    (response: any) => {
+      if (response?.result) {
+        const token = response.data.file;
+        const decoded: any = jwtDecode(token);
+        const exactpath = decoded?.path;
+        setVoucherPdf(exactpath);
+        handleClickOpenReceipt();
+      }
+    },
+    () => { }
   );
   // --------------------------------------------------------------
   const handleReset = () => {
@@ -415,6 +462,24 @@ export default function CrdeditVoucherListPage() {
               ) : (
                 <div />
               )}
+              {permission_view && row.original.status_id != 5 ? (
+                <Tooltip title="View Receipt">
+                  <LoadingButton
+                    color="secondary"
+                    variant="text"
+                    shape="rounded"
+                    loading={Boolean(row.original.id == selectedVoucherIdPdf && isLoading)}
+                    onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                      e.stopPropagation();
+                      setSelectedReceiptIdPdf(row.original.id);
+                    }}
+                  >
+                    <Note1 />
+                  </LoadingButton>
+                </Tooltip>
+              ) : (
+                <div />
+              )}
               {/* ---------------CONFIRM-------------- */}
               {permission_confirm && row.original.status_id != 5 && row.original.status_id != 2 ? (
                 <Tooltip title="Confirm">
@@ -435,7 +500,7 @@ export default function CrdeditVoucherListPage() {
                   </IconButton>
                 </Tooltip>
               ) : (
-                <Box width={40} height={40} />
+                <Box />
               )}
               {/* ---------------CANCEL-------------- */}
               {permission_cancel && row.original.status_id != 5 ? (
@@ -454,7 +519,7 @@ export default function CrdeditVoucherListPage() {
                   </IconButton>
                 </Tooltip>
               ) : (
-                <Box width={40} height={40} />
+                <Box />
               )}
             </Stack>
           );
@@ -592,7 +657,7 @@ export default function CrdeditVoucherListPage() {
             color="error"
             fullWidth
             sx={{ height: '50px', width: 'max-content', px: 4 }}
-            //variant="outlined"
+          //variant="outlined"
           >
             {'Clear'}
           </Button>
@@ -636,7 +701,14 @@ export default function CrdeditVoucherListPage() {
         isInProgress={isInProgress}
         percentage={percentage}
       />
-
+      <ReceiptPdfPreview
+        open={openReceipt}
+        handleClose={handleClose}
+        pdfUrl={voucherPdf}
+        handleDownload={handleDownload}
+        isInProgress={isInProgress}
+        percentage={percentage}
+      />
       <VoucherModel
         formType="creditVoucher"
         open={voucherModal}
@@ -647,6 +719,7 @@ export default function CrdeditVoucherListPage() {
         paymentTypes={paymentTypes}
         submit={onSubmit}
       />
+
       <AlertCreditVoucherDelete
         id={voucherDeleteId}
         voucher_date={voucherDeleteDate}
