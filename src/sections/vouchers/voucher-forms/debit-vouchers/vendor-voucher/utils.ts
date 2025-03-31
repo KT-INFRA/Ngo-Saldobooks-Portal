@@ -183,29 +183,21 @@ export const formateCreateVoucherPayload = async ({
 
   return {
     business_id: 1,
-    number: 0,
-    ledger_folio_number: 0,
-    date: "2000-09-12",
-    project_financial_year_id: 15,
-    voucher_type_id: 0,
-    voucher_category_id: 0,
-    status_id: 0,
     user_id: 1,
     project_id: values.projectId === 0 ? null : values.projectId,
-    // project_id: values.projectId,
     letter_ref_no: values.letterReferenceNo,
     narration: values.narration,
-    receiver_type_id: 2, // for vendor,
+    receiver_type_id: 2,
     bank_id: values.bank_id,
+    // project_id: values.projectId,
     items: values.items.map((item, index) => {
       const { tdsAmount, gstAmount, totalAmount } = getTaxData(item.taxableAmount, gstPercent, tdsPercent);
       return {
-        ordinal: index + 1,
         beneficiary_id: values.vendorId,
-        // beneficiary_id: 15,
         amount: totalAmount,
-        account_head_id: item.account_head_id,
         purpose: item.name,
+        ordinal: index + 1,
+        account_head_id: item.account_head_id,
         tds: {
           tax_id: values.tds,
           tax_amount: tdsAmount

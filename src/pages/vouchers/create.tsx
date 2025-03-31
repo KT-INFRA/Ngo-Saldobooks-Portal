@@ -22,6 +22,7 @@ import ProjectToProjectVoucher from 'sections/vouchers/voucher-forms/debit-vouch
 import VendorVoucher from 'sections/vouchers/voucher-forms/debit-vouchers/vendor-voucher/create';
 import AddOtherSourceVoucher from 'sections/vouchers/voucher-forms/credit-vouchers/other-source/create';
 import AddBankChargesVoucher from 'sections/vouchers/voucher-forms/debit-vouchers/bank-charges-voucher/create';
+import AddGeneralVocher from 'sections/vouchers/voucher-forms/debit-vouchers/journal-debit-voucher/create'
 
 interface IFormValue {
   voucherType: number;
@@ -77,6 +78,8 @@ export default function CreateVoucher() {
             return ProjectToProjectVoucher;
           case 6:
             return AddBankChargesVoucher; // Combine cases 5 and 6
+          case 7:
+            return AddGeneralVocher;
         }
         break;
       case 3:

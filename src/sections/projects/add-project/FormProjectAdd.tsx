@@ -32,7 +32,7 @@ import { InitialValues, formateCreateProjectPayload, getvalidationSchema, initia
 import { StepLabel, Stepper } from '@mui/material';
 import { Step } from '@mui/material';
 import Step1 from './Step1';
-import Step2 from './Step2';
+// import Step2 from './Step2';
 import AnimateButton from 'components/@extended/AnimateButton';
 // import Step3 from './Step3';
 import Step4 from './Step4';
@@ -65,7 +65,7 @@ export default function FormProjectAdd({ project, closeModal, getProjects }: Pro
   const [selectedImage, setSelectedImage] = useState<File | undefined>(undefined);
   const { employees } = useGetEmployeeList(true);
   const { fundingAgencies } = useGetFundingAgency();
-  const steps = ['Basic Details', 'Bank Details', 'Attach Documents'];
+  const steps = ['Basic Details', 'Attach Documents'];
   const [activeStep, setActiveStep] = useState(0);
   const { refetch } = useGetProjectList();
 
@@ -227,9 +227,9 @@ export default function FormProjectAdd({ project, closeModal, getProjects }: Pro
               ))}
             </Stepper>
             {activeStep === 0 && <Step1 employees={employees} fundingAgencies={fundingAgencies} />}
-            {activeStep === 1 && <Step2 />}
+            {/* {activeStep === 1 && <Step2 />} */}
             {/* {activeStep === 2 && <Step3 employees={employees} />} */}
-            {activeStep === 2 && <Step4 />}
+            {activeStep === 1 && <Step4 />}
           </DialogContent>
           <Divider />
           <DialogActions sx={{ px: 2 }}>

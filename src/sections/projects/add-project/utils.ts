@@ -252,7 +252,6 @@ export const formateCreateProjectPayload = async (values: InitialValues) => {
   return {
     business_id: business_id,
     project_group_id: 1,
-
     user_id: user_id,
     title: values.projectTitle,
     project_code: values.projectCode,
