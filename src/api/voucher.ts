@@ -70,8 +70,8 @@ export const useGetPaymentType = () => {
 };
 export const useGetFundingAgency = () => {
   const { business_id } = getUserData();
-  const { data, loading } = useQueryData([`/main/serve/fund-agency/?b=${business_id}`], async () =>
-    axiosServices.get(`/main/serve/fund-agency/?b=${business_id}`)
+  const { data, loading } = useQueryData([`/main/serve/donor/?b=${business_id}`], async () =>
+    axiosServices.get(`/main/serve/donor/?b=${business_id}`)
   );
 
   const memoizedValue = useMemo(

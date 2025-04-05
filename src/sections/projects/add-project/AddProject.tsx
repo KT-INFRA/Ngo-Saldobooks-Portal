@@ -14,12 +14,14 @@ import { handlerProjectDialog, useGetProject, useGetProjectMaster } from 'api/pr
 
 // types
 import { ProjectList } from 'types/project';
+import { useGetProjectGroupList } from 'api/masters';
 // ==============================|| PROJECT - ADD / EDIT ||============================== //
 
 export default function AddProject() {
   const { projectMasterLoading, projectMaster } = useGetProjectMaster();
   const { isLoading: loading, projects } = useGetProject();
   const isModal = projectMaster?.modal;
+  const { ProjectGroup: lists, refetch: getProjectGroupList } = useGetProjectGroupList();
 
   const [list, setList] = useState<ProjectList | null>(null);
 
@@ -65,7 +67,7 @@ export default function AddProject() {
                   </Stack>
                 </Box>
               ) : (
-                <FormProjectAdd project={list} closeModal={closeModal} getProjects={() => {}}/>
+                <FormProjectAdd project={list} closeModal={closeModal} getProjects={() => { }} />
               )}
             </SimpleBar>
           </MainCard>
