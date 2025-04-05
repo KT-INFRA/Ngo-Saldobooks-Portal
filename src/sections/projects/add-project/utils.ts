@@ -9,6 +9,7 @@ import * as Yup from 'yup';
 const { user_id, business_id }: UserProfile = storage.getItem('user');
 
 export interface InitialValues {
+  projectGroup: number;
   projectCode: string;
   projectTitle: string;
   projectPI: number;
@@ -51,56 +52,45 @@ export const initialValues = {
 export const basicFieldSchema = Yup.object().shape({
   projectCode: Yup.string().required('Project Code is required'),
   projectTitle: Yup.string().required('Project Title is required'),
-  // projectPI: Yup.number().required('Project PI is required').min(1, 'Project PI is required'),
-  projectPI: Yup.number().optional(),
-  fundingAgency: Yup.number().optional(),
+  projectPI: Yup.number().required('Project PI is required').min(1, 'Project PI is required'),
+  fundingAgency: Yup.number().required('Funding Agency is required').min(1, 'Funding Agency is required'),
   projectStart: Yup.string().required('Project Start is required').default(dayjs().format('YYYY-MM-DD')),
   isOnGoing: Yup.boolean(),
   // projectApprovedBudget: Yup.number().required('Project Approved Budget is required').positive('Budget must be positive'),
   // projectDuration: Yup.number().required('Project Duration is required').positive('Duration must be positive')
-  // projectDuration: Yup.number().when('isOnGoing', {
-  //   is: true,
-  //   then: (schema) => schema,
-  //   otherwise: (schema) => schema.required('Project Duration is required').positive('Project duration must be a positive number')
-  // }),
   projectDuration: Yup.number().when('isOnGoing', {
     is: true,
     then: (schema) => schema,
-    otherwise: (schema) => schema.optional()
+    otherwise: (schema) => schema.required('Project Duration is required').positive('Project duration must be a positive number')
   }),
-  // projectApprovedBudget: Yup.number().when('isOnGoing', {
-  //   is: true,
-  //   then: (schema) => schema,
-  //   otherwise: (schema) =>
-  //     schema.required('Project Approved Budget is required').positive('Project approved budget must be a positive number')
-  // })
   projectApprovedBudget: Yup.number().when('isOnGoing', {
     is: true,
     then: (schema) => schema,
     otherwise: (schema) =>
-      schema.optional()
+      schema.required('Project Approved Budget is required').positive('Project approved budget must be a positive number')
   })
 });
+// export const bankFieldSchema = Yup.object().shape({
+//   bankName: Yup.string().required('Bank Name is required'),
+//   beneficiaryName: Yup.string().required('Beneficiary Name is required'),
+//   ifscCode: Yup.string()
+//     .required('IFSC Code is required')
+//     .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Invalid IFSC Code format'),
+//   accountNumber: Yup.string().required('Account Number is required').matches(/^\d+$/, 'Account Number must be numeric'),
+//   purpose: Yup.string().required('Purpose is required')
+// });
 export const bankFieldSchema = Yup.object().shape({
-  // bankName: Yup.string().required('Bank Name is required'),
-  bankName: Yup.string().optional(),
-  // beneficiaryName: Yup.string().required('Beneficiary Name is required'),
-  beneficiaryName: Yup.string().optional(),
-  // ifscCode: Yup.string()
-  //   .required('IFSC Code is required')
-  //   .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Invalid IFSC Code format'),
-  // accountNumber: Yup.string().required('Account Number is required').matches(/^\d+$/, 'Account Number must be numeric'),
-  ifscCode: Yup.string()
-    .optional()
-    .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Invalid IFSC Code format'),
-  // accountNumber: Yup.string().required('Account Number is required').matches(/^\d+$/, 'Account Number must be numeric'),
-  accountNumber: Yup.string().optional(),
-  purpose: Yup.string().required('Purpose is required')
+  bankName: Yup.string(), // removed .required()
+  beneficiaryName: Yup.string(),
+  ifscCode: Yup.string().matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Invalid IFSC Code format'),
+  accountNumber: Yup.string().matches(/^\d+$/, 'Account Number must be numeric'),
+  purpose: Yup.string()
 });
 
+
 export const assignFieldSchema = Yup.object().shape({
-  associates: Yup.array().optional(),
-  coPIs: Yup.array().optional(),
+  associates: Yup.array().min(1, 'Select At least one Associate'),
+  coPIs: Yup.array().min(1, 'Select At least one Co PI')
 });
 
 export const getvalidationSchema = (step: number) => {
@@ -247,11 +237,35 @@ async function getProjectFilesBase64(files: File[]): Promise<FileObject[]> {
 //   return Promise.all(promises);
 // }
 
+// export const formateCreateProjectPayload = async (values: InitialValues) => {
+//   const project_files: FileObject[] = await getProjectFilesBase64(values.projectFiles);
+//   return {
+//     business_id: business_id,
+//     project_group_id: values.projectGroup,
+//     user_id: user_id,
+//     title: values.projectTitle,
+//     project_code: values.projectCode,
+//     start_date: values.projectStart,
+//     duration: values.projectDuration,
+//     funding_agencies_id: values.fundingAgency,
+//     approved_budget: values.projectApprovedBudget,
+//     is_draft: values.isDraft,
+//     project_file: project_files,
+//     bank_details: {
+//       bank_name: values.bankName,
+//       beneficiary_name: values.beneficiaryName,
+//       purpose: values.purpose,
+//       ifsc_code: values.ifscCode,
+//       account_number: values.accountNumber
+//     },
+//     project_role_list: getEmployeesBasedOnAccessType(values)
+//   };
+// };
 export const formateCreateProjectPayload = async (values: InitialValues) => {
   const project_files: FileObject[] = await getProjectFilesBase64(values.projectFiles);
-  return {
+
+  const payload: any = {
     business_id: business_id,
-    project_group_id: 1,
     user_id: user_id,
     title: values.projectTitle,
     project_code: values.projectCode,
@@ -260,6 +274,7 @@ export const formateCreateProjectPayload = async (values: InitialValues) => {
     funding_agencies_id: values.fundingAgency,
     approved_budget: values.projectApprovedBudget,
     is_draft: values.isDraft,
+    project_group_id: 1,
     project_file: project_files,
     bank_details: {
       bank_name: values.bankName,
@@ -267,8 +282,18 @@ export const formateCreateProjectPayload = async (values: InitialValues) => {
       purpose: values.purpose,
       ifsc_code: values.ifscCode,
       account_number: values.accountNumber
-    },
-    // project_role_list: getEmployeesBasedOnAccessType(values),
-    project_role_list: null
+    }
   };
+
+  // Add conditionally if value is provided
+  if (values.projectGroup) {
+    payload.project_group_id = values.projectGroup;
+  }
+
+  const roleList = getEmployeesBasedOnAccessType(values);
+  if (roleList && roleList.length > 0) {
+    payload.project_role_list = roleList;
+  }
+
+  return payload;
 };

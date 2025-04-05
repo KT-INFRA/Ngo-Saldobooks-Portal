@@ -2,7 +2,6 @@
 import { useEffect, useState, useMemo } from 'react';
 
 // material ui
-// import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -10,119 +9,95 @@ import Divider from '@mui/material/Divider';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import { StepLabel, Stepper, Step } from '@mui/material';
 
 // third party
 import _ from 'lodash';
-import { useFormik, Form, FormikProvider, FormikTouched } from 'formik';
+import { useFormik, Form, FormikProvider } from 'formik';
 
 // project imports
 import AlertProjectDelete from '../AlertProjectDelete';
 import CircularWithPath from 'components/@extended/progress/CircularWithPath';
+import AnimateButton from 'components/@extended/AnimateButton';
 
 import { openSnackbar } from 'api/snackbar';
-import { insertProject, updateProject, useCreateProject, useGetProjectList } from 'api/project';
-
-// assets
-
-// types
-import { SnackbarProps } from 'types/snackbar';
-import { ProjectList } from 'types/project';
+import { useCreateProject, useGetProjectList } from 'api/project';
 import { useGetEmployeeList, useGetFundingAgency } from 'api/voucher';
+
+import { SnackbarProps } from 'types/snackbar';
 import { InitialValues, formateCreateProjectPayload, getvalidationSchema, initialValues } from './utils';
-import { StepLabel, Stepper } from '@mui/material';
-import { Step } from '@mui/material';
 import Step1 from './Step1';
 // import Step2 from './Step2';
-import AnimateButton from 'components/@extended/AnimateButton';
 // import Step3 from './Step3';
 import Step4 from './Step4';
 
-interface StatusProps {
-  value: number;
-  label: string;
+interface Props {
+  project: any | null;
+  closeModal: () => void;
+  getProjects: () => void;
 }
 
 // CONSTANT
 const getInitialValues = (project: InitialValues | null) => {
   const newProject = initialValues;
-  if (project) {
-    return _.merge({}, initialValues, project);
-  }
-
-  return newProject;
+  return project ? _.merge({}, initialValues, project) : newProject;
 };
 
-// ==============================|| PROJECT ADD / EDIT - FORM ||============================== //
-interface Props { 
-  project: any | null; 
-  closeModal: () => void; 
-  getProjects: () => void 
-}
-
-
 export default function FormProjectAdd({ project, closeModal, getProjects }: Props) {
-  const [loading, setLoading] = useState<boolean>(true);
-  const [selectedImage, setSelectedImage] = useState<File | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
+  const [activeStep, setActiveStep] = useState(0);
+  const [openAlert, setOpenAlert] = useState(false);
+
   const { employees } = useGetEmployeeList(true);
   const { fundingAgencies } = useGetFundingAgency();
-  const steps = ['Basic Details', 'Attach Documents'];
-  const [activeStep, setActiveStep] = useState(0);
   const { refetch } = useGetProjectList();
 
-
-  const handleBack = () => {
-    setActiveStep(activeStep - 1);
-  };
+  const steps = ['Basic Details', 'Attach Documents']; // Removed Step2 and Step3
 
   useEffect(() => {
     setLoading(false);
   }, []);
 
-  const [openAlert, setOpenAlert] = useState(false);
+  const handleBack = () => {
+    setActiveStep((prev) => prev - 1);
+  };
 
   const handleAlertClose = () => {
-    setOpenAlert(!openAlert);
+    setOpenAlert(false);
     closeModal();
   };
 
   const validationSchema = useMemo(() => getvalidationSchema(activeStep), [activeStep]);
 
   const formik = useFormik({
-    initialValues: getInitialValues(project!),
-    validationSchema: validationSchema,
+    initialValues: getInitialValues(project),
+    validationSchema,
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
-        const formatedValues = await formateCreateProjectPayload(values as any); 
+        const formatedValues = await formateCreateProjectPayload(values as any);
         if (formatedValues) {
-          await createProject({
-            ...formatedValues
-          } as any);
+          await createProject({ ...formatedValues });
+
           refetch();
           getProjects();
           setActiveStep(0);
           resetForm();
           closeModal();
-
-        // Reload the page after submission
-        // window.location.reload();
         }
       } catch (error: any) {
-        var errorMessage = error.message;
-        if (Array.isArray(error)) {
-          errorMessage = error[0].msg;
-        } else {
-          errorMessage = 'An error occurred while updating the project.';
-        }
+        const errorMessage = Array.isArray(error)
+          ? error[0].msg
+          : error.message || 'An error occurred while updating the project.';
         openSnackbar({
           open: true,
           message: errorMessage,
           anchorOrigin: { vertical: 'top', horizontal: 'right' },
           variant: 'alert',
-          alert: {
-            color: 'error'
-          }
+          alert: { color: 'error' }
         } as SnackbarProps);
+      } finally {
+        setSubmitting(false);
       }
     }
   });
@@ -130,53 +105,44 @@ export default function FormProjectAdd({ project, closeModal, getProjects }: Pro
   const { createProject, isLoading: isCreatingVoucher } = useCreateProject(
     (response: any) => {
       if (response?.result) {
-        // Success response
         openSnackbar({
           open: true,
           message: response.message,
           anchorOrigin: { vertical: 'top', horizontal: 'right' },
           variant: 'alert',
-          alert: {
-            color: 'success'
-          }
+          alert: { color: 'success' }
         } as SnackbarProps);
-        setActiveStep(0);
         formik.resetForm();
+        setActiveStep(0);
         handleAlertClose();
       } else if (Array.isArray(response) && response.length > 0) {
-        // Handling validation errors
         const errorMessages = response.map((err) => err.msg).join(', ');
         openSnackbar({
           open: true,
           message: errorMessages,
           anchorOrigin: { vertical: 'top', horizontal: 'right' },
           variant: 'alert',
-          alert: {
-            color: 'error'
-          }
+          alert: { color: 'error' }
         } as SnackbarProps);
         setActiveStep(0);
         formik.resetForm();
       }
     },
     (error: any) => {
-      // Error handling from the second callback
       openSnackbar({
         open: true,
         message: error.message || 'An error occurred while creating the voucher.',
         anchorOrigin: { vertical: 'top', horizontal: 'right' },
         variant: 'alert',
-        alert: {
-          color: 'error'
-        }
+        alert: { color: 'error' }
       } as SnackbarProps);
     }
   );
 
-  const { handleSubmit, validateForm, setFieldTouched, values } = formik;
+  const { handleSubmit, validateForm, setFieldTouched, values, isSubmitting } = formik;
   const isDraft = values?.isDraft;
 
-  if (loading)
+  if (loading) {
     return (
       <Box sx={{ p: 5 }}>
         <Stack direction="row" justifyContent="center">
@@ -184,6 +150,7 @@ export default function FormProjectAdd({ project, closeModal, getProjects }: Pro
         </Stack>
       </Box>
     );
+  }
 
   const handleNext = async () => {
     const errors = await validateForm();
@@ -191,10 +158,10 @@ export default function FormProjectAdd({ project, closeModal, getProjects }: Pro
       if (activeStep === steps.length - 1) {
         handleSubmit();
       } else {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setActiveStep((prevStep) => prevStep + 1);
       }
     } else {
-      Object.keys(initialValues).forEach((key: string) => {
+      Object.keys(initialValues).forEach((key) => {
         setFieldTouched(key);
       });
     }
@@ -204,28 +171,23 @@ export default function FormProjectAdd({ project, closeModal, getProjects }: Pro
     <>
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-          <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
             <DialogTitle>{project ? 'Edit Project' : 'Add Project'}</DialogTitle>
             <Button size="medium" variant="outlined" onClick={handleAlertClose} sx={{ mx: 3, ml: 1 }}>
-              {'Close'}
+              Close
             </Button>
           </Stack>
           <Divider />
           <DialogContent sx={{ p: 5, minHeight: 'calc(100vh - 50vh)' }}>
             <Stepper activeStep={activeStep}>
-              {steps.map((step, index) => (
+              {steps.map((step) => (
                 <Step key={step}>
-                  <StepLabel
-                    onClick={() => {
-                      // setActiveStep(index);
-                    }}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    {step}
-                  </StepLabel>
+                  <StepLabel sx={{ cursor: 'pointer' }}>{step}</StepLabel>
                 </Step>
               ))}
             </Stepper>
+
+            {/* Only Step1 and Step4 used */}
             {activeStep === 0 && <Step1 employees={employees} fundingAgencies={fundingAgencies} />}
             {/* {activeStep === 1 && <Step2 />} */}
             {/* {activeStep === 2 && <Step3 employees={employees} />} */}
@@ -240,17 +202,36 @@ export default function FormProjectAdd({ project, closeModal, getProjects }: Pro
                 </Button>
               )}
               <AnimateButton>
-                <Button variant="contained" onClick={handleNext} sx={{ my: 3, ml: 1 }}>
-                  {activeStep === steps.length - 1 ? (isDraft ? 'Save Draft' : project ? 'Update' : 'Create') : 'Next'}
+                <Button
+                  variant="contained"
+                  onClick={handleNext}
+                  sx={{ my: 3, ml: 1 }}
+                  disabled={isCreatingVoucher || isSubmitting}
+                >
+                  {isCreatingVoucher || isSubmitting
+                    ? 'Saving...'
+                    : activeStep === steps.length - 1
+                    ? isDraft
+                      ? 'Save Draft'
+                      : project
+                      ? 'Update'
+                      : 'Create'
+                    : 'Next'}
                 </Button>
               </AnimateButton>
             </Stack>
           </DialogActions>
         </Form>
       </FormikProvider>
-      {project && <AlertProjectDelete id={project.id!} title={project.project_code} open={openAlert} handleClose={handleAlertClose} />}
+
+      {project && (
+        <AlertProjectDelete
+          id={project.id!}
+          title={project.project_code}
+          open={openAlert}
+          handleClose={handleAlertClose}
+        />
+      )}
     </>
   );
 }
-
-

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Autocomplete, InputLabel, ListItem, ListItemIcon, Switch } from '@mui/material';
 import { Stack } from '@mui/material';
 import { Grid, TextField } from '@mui/material';
@@ -10,6 +10,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { Clock } from 'iconsax-react';
 import { Typography } from '@mui/material';
 import { ListItemText } from '@mui/material';
+import { useGetProjectGroupList } from 'api/masters';
 
 // type FormikType = ReturnType<typeof useFormik>;
 
@@ -21,6 +22,16 @@ interface Step1Props {
 
 function Step1({ employees, fundingAgencies }: Step1Props) {
   const { getFieldProps, touched, values, errors, setFieldValue } = useFormikContext<InitialValues>();
+
+  const { ProjectGroup, ProjectGroupLoading, ProjectGroupError } = useGetProjectGroupList();
+
+  const [projectGroups, setProjectGroups] = useState<{ id: number; name: string }[]>([]);
+
+  useEffect(() => {
+    if (Array.isArray(ProjectGroup)) {
+      setProjectGroups(ProjectGroup);
+    }
+  }, [ProjectGroup]);
 
   return (
     <Grid container mt={2} spacing={3}>
@@ -52,6 +63,7 @@ function Step1({ employees, fundingAgencies }: Step1Props) {
               />
             </Stack>
           </Grid>
+          
           <Grid item xs={12} sm={6}>
             <InputLabel sx={{ mb: 1 }}>{'Project PI'}</InputLabel>
             <Autocomplete
@@ -88,7 +100,7 @@ function Step1({ employees, fundingAgencies }: Step1Props) {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <InputLabel sx={{ mb: 1 }}>{'Funding Agency'}</InputLabel>
+            <InputLabel sx={{ mb: 1 }}>{'Donor Type'}</InputLabel>
             <Autocomplete
               sx={{
                 '& .MuiInputBase-root': {
@@ -115,7 +127,7 @@ function Step1({ employees, fundingAgencies }: Step1Props) {
                 <TextField
                   {...params}
                   name="fundingAgency"
-                  placeholder="Funding Agency"
+                  placeholder="Donor Type"
                   error={touched.fundingAgency && Boolean(errors.fundingAgency)}
                   helperText={touched.fundingAgency && errors.fundingAgency}
                 />
@@ -147,7 +159,7 @@ function Step1({ employees, fundingAgencies }: Step1Props) {
                 <ListItemText
                   id="switch-list-label-oc"
                   primary={<Typography variant="h5">On Going Project?</Typography>}
-                  secondary="Is this project is on going project"
+                  secondary="Is this project ongoing?"
                 />
                 <Switch
                   edge="end"
@@ -160,7 +172,6 @@ function Step1({ employees, fundingAgencies }: Step1Props) {
               </ListItem>
             </Stack>
           </Grid>
-
           {!values.isOnGoing && (
             <Grid item xs={6}>
               <Stack spacing={1}>
@@ -193,9 +204,8 @@ function Step1({ employees, fundingAgencies }: Step1Props) {
               </Stack>
             </Grid>
           )}
-          {/* <Grid item xs={12}>
-            <DocumentsPicker />
-          </Grid> */}
+
+
         </Grid>
       </Grid>
     </Grid>
