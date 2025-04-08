@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 import * as Yup from 'yup';
 
 export interface InitialValues {
-  // voucherNo: string;
   accountHeadId: number;
   amount: number;
   paymentType: number;
@@ -20,7 +19,6 @@ export interface InitialValues {
 }
 
 export const initialValues: InitialValues = {
-  // voucherNo: '',
   accountHeadId: 0,
   amount: 0,
   paymentRef: '',
@@ -39,12 +37,9 @@ export const initialValues: InitialValues = {
 export default initialValues;
 
 export const firstStepValidationSchema = Yup.object({
-  // voucherNo: Yup.number().required('Voucher Number is required').min(1, 'Voucher Number Should be Greater than 0'),
   accountHeadId: Yup.number().required('Account Head is required').min(1, 'Please select a valid Account Head'),
   voucherDate: Yup.string().required('Voucher Date is required').default(dayjs().format('YYYY-MM-DD')),
-  // projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
   projectId: Yup.number().optional(),
-  // letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
   letterReferenceNo: Yup.string().optional(),
   narration: Yup.string().required('Narration is required'),
   amount: Yup.number().required('Amount is required').min(1, 'Amount must be greater than 0'),
@@ -60,10 +55,11 @@ export const combinedValidationSchema = firstStepValidationSchema.concat(secondS
 
 interface FileObject {
   file: string;
-  extension: string; // Extension type .png, .jpg, ....
-  mime_type: string; // MIME TYPE image/jpeg, application/pdf,...
+  extension: string;
+  mime_type: string;
   description: string;
 }
+
 type FileExtensions = keyof typeof mimeTypes;
 
 const getMimeType = (extension: FileExtensions): string => {
@@ -96,22 +92,19 @@ async function getProjectFilesBase64(files: File[]): Promise<FileObject[]> {
 
   return Promise.all(promises);
 }
+
 export const formateCreateBankVoucherPayload = async (values: InitialValues) => {
   const project_files: FileObject[] = await getProjectFilesBase64(values.projectFiles!);
   return {
     business_id: 1,
     user_id: 1,
-    // number: values.voucherNo + '/' + dayjs(values?.voucherDate).format('MM'),
-    number: "007/08",
     date: values.voucherDate,
-    // project_id: values.projectId,
     project_id: values.projectId === 0 ? null : values.projectId,
     letter_ref_no: values.letterReferenceNo,
     narration: values.narration,
-    voucher_type_id: 1,
     bank_id: values.bank_id,
     items: {
-      amount: values.amount,
+      amount: Number(values.amount), // ✅ Ensure this is a number
       account_head_id: values.accountHeadId,
       purpose: values.purpose,
       payment_type_id: values.paymentType,

@@ -281,14 +281,14 @@ export default function AccountHeadListPage() {
         header: 'ACCOUNT HEAD CATEGORY',
         accessorKey: 'account_head_category',
         cell: (cell) => {
-          if (cell.getValue() === 'R') {
+          if (cell.getValue() === 'LC') {
             return (
               <>
-                <Chip label="Recurring" size="small" variant="outlined" />
+                <Chip label="Local Contribution" size="small" variant="outlined" />
               </>
             );
           }
-          return <Chip label="Non Recurring" size="small" />;
+          return <Chip label="Foreign Contribution" size="small" />;
         }
       },
       {

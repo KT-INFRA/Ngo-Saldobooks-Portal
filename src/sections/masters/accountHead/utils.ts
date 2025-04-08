@@ -109,11 +109,11 @@ export const accountHeadTypeOption = [
 ];
 export const accountHeadCategoryOption = [
   {
-    label: 'Recurring',
-    value: 'R'
+    label: 'Local Contribution',
+    value: 'L'
   },
   {
-    label: 'Non-Recurring',
-    value: 'N'
+    label: 'Foreign Contribution',
+    value: 'F'
   }
 ];
