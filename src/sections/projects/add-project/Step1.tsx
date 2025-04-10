@@ -99,7 +99,7 @@ function Step1({ employees, fundingAgencies }: Step1Props) {
               )}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          {/* <Grid item xs={12} sm={6}>
             <InputLabel sx={{ mb: 1 }}>{'Donor Type'}</InputLabel>
             <Autocomplete
               sx={{
@@ -133,9 +133,9 @@ function Step1({ employees, fundingAgencies }: Step1Props) {
                 />
               )}
             />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={6}>
+          {/* <Grid item xs={6}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <InputLabel sx={{ mb: 1 }}>Project Start</InputLabel>
               <Stack>
@@ -149,8 +149,8 @@ function Step1({ employees, fundingAgencies }: Step1Props) {
                 />
               </Stack>
             </LocalizationProvider>
-          </Grid>
-          <Grid item xs={6}>
+          </Grid> */}
+          {/* <Grid item xs={6}>
             <Stack my={1}>
               <ListItem>
                 <ListItemIcon sx={{ color: 'primary.main', mr: 2, display: { xs: 'none', sm: 'block' } }}>
@@ -171,8 +171,8 @@ function Step1({ employees, fundingAgencies }: Step1Props) {
                 />
               </ListItem>
             </Stack>
-          </Grid>
-          {!values.isOnGoing && (
+          </Grid> */}
+          {/* {!values.isOnGoing && (
             <Grid item xs={6}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="project-duration">Project Duration (Months)</InputLabel>
@@ -187,8 +187,8 @@ function Step1({ employees, fundingAgencies }: Step1Props) {
                 />
               </Stack>
             </Grid>
-          )}
-          {!values.isOnGoing && (
+          )} */}
+          {/* {!values.isOnGoing && (
             <Grid item xs={6}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="projectApprovedBudget">Project Approved Budget:</InputLabel>
@@ -203,7 +203,7 @@ function Step1({ employees, fundingAgencies }: Step1Props) {
                 />
               </Stack>
             </Grid>
-          )}
+          )} */}
 
 
         </Grid>
