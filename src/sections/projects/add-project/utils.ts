@@ -52,23 +52,28 @@ export const initialValues = {
 export const basicFieldSchema = Yup.object().shape({
   projectCode: Yup.string().required('Project Code is required'),
   projectTitle: Yup.string().required('Project Title is required'),
-  projectPI: Yup.number().required('Project PI is required').min(1, 'Project PI is required'),
-  fundingAgency: Yup.number().required('Funding Agency is required').min(1, 'Funding Agency is required'),
-  projectStart: Yup.string().required('Project Start is required').default(dayjs().format('YYYY-MM-DD')),
-  isOnGoing: Yup.boolean(),
+  // projectPI: Yup.number().required('Project PI is required').min(1, 'Project PI is required'),
+  projectPI: Yup.number().optional(),
+ // fundingAgency: Yup.number().optional(),
+//  projectStart: Yup.string().optional(),
+  //isOnGoing: Yup.boolean().optional(),
   // projectApprovedBudget: Yup.number().required('Project Approved Budget is required').positive('Budget must be positive'),
   // projectDuration: Yup.number().required('Project Duration is required').positive('Duration must be positive')
-  projectDuration: Yup.number().when('isOnGoing', {
-    is: true,
-    then: (schema) => schema,
-    otherwise: (schema) => schema.required('Project Duration is required').positive('Project duration must be a positive number')
-  }),
-  projectApprovedBudget: Yup.number().when('isOnGoing', {
-    is: true,
-    then: (schema) => schema,
-    otherwise: (schema) =>
-      schema.required('Project Approved Budget is required').positive('Project approved budget must be a positive number')
-  })
+  // projectDuration: Yup.number().when('isOnGoing', {
+  //   is: true,
+  //   then: (schema) => schema.notRequired(), // ✅ optional when isOnGoing is true
+  //   otherwise: (schema) =>
+  //     schema
+  //       .required('Project Duration is required')
+  //       .positive('Project duration must be a positive number'),
+  // }),  
+  // projectApprovedBudget: Yup.number().when('isOnGoing', {
+  //   is: true,
+  //   then: (schema) => schema.notRequired(),
+  //   otherwise: (schema) =>
+  //     schema.required('Project Approved Budget is required').positive('Project approved budget must be a positive number'),
+  // }),
+  
 });
 // export const bankFieldSchema = Yup.object().shape({
 //   bankName: Yup.string().required('Bank Name is required'),
