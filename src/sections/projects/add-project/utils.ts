@@ -54,8 +54,8 @@ export const basicFieldSchema = Yup.object().shape({
   projectTitle: Yup.string().required('Project Title is required'),
   // projectPI: Yup.number().required('Project PI is required').min(1, 'Project PI is required'),
   projectPI: Yup.number().optional(),
- // fundingAgency: Yup.number().optional(),
-//  projectStart: Yup.string().optional(),
+  // fundingAgency: Yup.number().optional(),
+  //  projectStart: Yup.string().optional(),
   //isOnGoing: Yup.boolean().optional(),
   // projectApprovedBudget: Yup.number().required('Project Approved Budget is required').positive('Budget must be positive'),
   // projectDuration: Yup.number().required('Project Duration is required').positive('Duration must be positive')
@@ -73,7 +73,7 @@ export const basicFieldSchema = Yup.object().shape({
   //   otherwise: (schema) =>
   //     schema.required('Project Approved Budget is required').positive('Project approved budget must be a positive number'),
   // }),
-  
+
 });
 // export const bankFieldSchema = Yup.object().shape({
 //   bankName: Yup.string().required('Bank Name is required'),
@@ -266,6 +266,42 @@ async function getProjectFilesBase64(files: File[]): Promise<FileObject[]> {
 //     project_role_list: getEmployeesBasedOnAccessType(values)
 //   };
 // };
+// export const formateCreateProjectPayload = async (values: InitialValues) => {
+//   const project_files: FileObject[] = await getProjectFilesBase64(values.projectFiles);
+
+//   const payload: any = {
+//     business_id: business_id,
+//     user_id: user_id,
+//     title: values.projectTitle,
+//     project_code: values.projectCode,
+//     start_date: values.projectStart,
+//     duration: values.projectDuration,
+//     funding_agencies_id: values.fundingAgency,
+//     approved_budget: values.projectApprovedBudget,
+//     is_draft: values.isDraft,
+//     project_group_id: 1,
+//     project_file: project_files,
+//     bank_details: {
+//       bank_name: values.bankName,
+//       beneficiary_name: values.beneficiaryName,
+//       purpose: values.purpose,
+//       ifsc_code: values.ifscCode,
+//       account_number: values.accountNumber
+//     }
+//   };
+
+//   // Add conditionally if value is provided
+//   if (values.projectGroup) {
+//     payload.project_group_id = values.projectGroup;
+//   }
+
+//   const roleList = getEmployeesBasedOnAccessType(values);
+//   if (roleList && roleList.length > 0) {
+//     payload.project_role_list = roleList;
+//   }
+
+//   return payload;
+// };
 export const formateCreateProjectPayload = async (values: InitialValues) => {
   const project_files: FileObject[] = await getProjectFilesBase64(values.projectFiles);
 
@@ -279,7 +315,7 @@ export const formateCreateProjectPayload = async (values: InitialValues) => {
     funding_agencies_id: values.fundingAgency,
     approved_budget: values.projectApprovedBudget,
     is_draft: values.isDraft,
-    project_group_id: 1,
+    project_group_id: values.projectGroup || 1,
     project_file: project_files,
     bank_details: {
       bank_name: values.bankName,
@@ -290,15 +326,14 @@ export const formateCreateProjectPayload = async (values: InitialValues) => {
     }
   };
 
-  // Add conditionally if value is provided
-  if (values.projectGroup) {
-    payload.project_group_id = values.projectGroup;
-  }
-
   const roleList = getEmployeesBasedOnAccessType(values);
-  if (roleList && roleList.length > 0) {
-    payload.project_role_list = roleList;
-  }
+
+  const isValidRoleList =
+    roleList.length > 0 &&
+    !roleList.every((r) => r.employee_id === 0); // All employee_id are 0
+
+  payload.project_role_list = isValidRoleList ? roleList : null;
 
   return payload;
 };
+
