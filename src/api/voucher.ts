@@ -133,11 +133,33 @@ export const useGetBankName = (projectId = 1) => {
   return memoizedValue;
 };
 
-export const useGetAccountHead = (aht: string[] = ['D']) => {
-  const stringRepresentation = JSON.stringify(aht).replace(/"/g, "'");
+// export const useGetAccountHead = (aht: string[] = ['D']) => {
+//   const stringRepresentation = JSON.stringify(aht).replace(/"/g, "'");
+//   const { business_id } = getUserData();
+//   const { data, loading } = useQueryData([`/main/serve/account-head/?b=${business_id}&aht=${stringRepresentation}`], async () =>
+//     axiosServices.get(`/main/serve/account-head/?b=${business_id}&aht=${stringRepresentation}`)
+//   );
+
+//   const memoizedValue = useMemo(
+//     () => ({
+//       accountHeads: data,
+//       accountHeadLoading: loading
+//     }),
+//     [data, loading]
+//   );
+
+//   return memoizedValue;
+// };
+
+export const useGetAccountHead = (projectCode: number) => {
   const { business_id } = getUserData();
-  const { data, loading } = useQueryData([`/main/serve/account-head/?b=${business_id}&aht=${stringRepresentation}`], async () =>
-    axiosServices.get(`/main/serve/account-head/?b=${business_id}&aht=${stringRepresentation}`)
+
+  const { data, loading } = useQueryData(
+    [`/main/serve/project/account-head/list/?p=${projectCode}&b=${business_id}`],
+    async () =>
+      axiosServices.get(
+        `/main/serve/project/account-head/list/?p=${projectCode}&b=${business_id}`
+      )
   );
 
   const memoizedValue = useMemo(
@@ -150,6 +172,7 @@ export const useGetAccountHead = (aht: string[] = ['D']) => {
 
   return memoizedValue;
 };
+
 
 export const useGetAccountHeadCommon = () => {
   const { data, loading } = useQueryData(['/main/serve/common/account-head/'], async () =>
