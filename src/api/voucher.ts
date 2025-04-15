@@ -1191,25 +1191,52 @@ export const useSettleAdvanceManagement = () => {
   };
 };
 
+// export const useGetOwnBankAccounts = () => {
+//   const key = `/main/serve/own_account/bank/`; // API endpoint
+
+//   const { isLoading, data } = useQuery({
+//     queryKey: [key],
+//     queryFn: async () => {
+//       const response = await axiosServices.get(key);
+//       return response.data; // Extract the response data
+//     },
+//     refetchOnWindowFocus: false,
+//     refetchOnMount: false,
+//     refetchOnReconnect: false
+//   });
+
+//   // Format the data for Autocomplete
+//   const formattedData = useMemo(() => {
+//     return (data?.data ?? []).map((item: any) => ({
+//       value: item.id, // Use bank ID as value
+//       label: item.bank_name // Use bank name as label
+//     }));
+//   }, [data?.data]);
+
+//   return {
+//     bankListData: formattedData,
+//     loading: isLoading
+//   };
+// };
+
 export const useGetOwnBankAccounts = () => {
-  const key = `/main/serve/own_account/bank/`; // API endpoint
+  const key = `/main/serve/own_account/bank/`;
 
   const { isLoading, data } = useQuery({
     queryKey: [key],
     queryFn: async () => {
       const response = await axiosServices.get(key);
-      return response.data; // Extract the response data
+      return response.data;
     },
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false
   });
 
-  // Format the data for Autocomplete
   const formattedData = useMemo(() => {
     return (data?.data ?? []).map((item: any) => ({
-      value: item.id, // Use bank ID as value
-      label: item.bank_name // Use bank name as label
+      ...item,
+      value: item.id
     }));
   }, [data?.data]);
 
@@ -1218,3 +1245,4 @@ export const useGetOwnBankAccounts = () => {
     loading: isLoading
   };
 };
+

@@ -277,14 +277,30 @@ export default function AddBankChargesVoucher() {
                                       padding: '0 14px'
                                     }
                                   }}
-                                  value={bankListData.find((bank: { value: string; }) => bank.value === values.bank_id) || null}
+                                  value={
+                                    bankListData.find((bank: { value: string | undefined; }) => bank.value === values.bank_id) || null
+                                  }   
                                   onChange={(_e, bank) => {
                                     setFieldValue('bank_id', bank?.value ?? '');
                                   }}
                                   isOptionEqualToValue={(option, value) => option?.value === value?.value}
                                   options={bankListData}
-                                  getOptionLabel={(option) => option.label || ''}
+                                  getOptionLabel={(option) =>
+                                    `${option.account_type?.name || 'N/A'} - ${option.account_number}`
+                                  }
                                   loading={loading}
+                                  renderOption={(props, option) => (
+                                    <li {...props}>
+                                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <span>
+                                          {`${option.account_type?.name || 'N/A'} - ${option.account_number}`}
+                                        </span>
+                                        <span style={{ fontSize: '0.8rem', color: 'gray' }}>
+                                          ({option.bank_name})
+                                        </span>
+                                      </div>
+                                    </li>
+                                  )}
                                   renderInput={(params) => (
                                     <TextField
                                       {...params}
@@ -295,6 +311,7 @@ export default function AddBankChargesVoucher() {
                                     />
                                   )}
                                 />
+
                               </Grid>
                               {/* Voucher Date */}
                               <Grid item xs={12} md={12}>
