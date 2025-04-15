@@ -51,6 +51,7 @@ import {
 import { SnackbarProps } from 'types/snackbar';
 import VoucherCardTitle from '../../components/voucher-card-title';
 import { ReactFilesPreview } from 'sections/projects/add-project/FilePicker/ReactFilesPreview';
+import { useNavigate } from 'react-router-dom';
 
 // ==============================|| Account Voucher - ADD Voucher ||============================== //
 
@@ -61,6 +62,7 @@ export default function VendorVoucher() {
   const { gstLists } = useGetGSTList();
   const { tdsLists } = useGetTDSList();
   const { bankListData, loading } = useGetOwnBankAccounts();
+  const navigate = useNavigate();
 
 
   const { createVoucher, isLoading: isCreatingVoucher } = useCreateDebitVoucher(
@@ -234,8 +236,17 @@ export default function VendorVoucher() {
                               </Grid>
                               {/* Project Code */}
 
-                              <Grid item xs={12} md={12}>
+                              {/* <Grid item xs={12} md={12}>
                                 <InputLabel sx={{ mb: 1 }}>{'Vendor Name'}</InputLabel>
+                                    <Button
+                                    variant="shadow"
+                                    color="primary"
+                                    fullWidth
+                                    onClick={() => navigate('/add-vendor')}
+                                    sx={{ height: '30px', width: '20px' }}
+                                  >
+                                    +
+                                  </Button>
                                 <Autocomplete
                                   sx={{
                                     '& .MuiInputBase-root': {
@@ -268,9 +279,63 @@ export default function VendorVoucher() {
                                     />
                                   )}
                                 />
+                              </Grid> */}
+
+                              <Grid item xs={12} md={12} spacing={1}>
+                                <Stack direction={'row'} justifyContent={'space-between'}>
+                                  <InputLabel sx={{ mb: 1 }}>{'Vendor Name'}</InputLabel>
+                                  {/* <InputLabel sx={{ mb: 1 }}>{'Vendor Name'}</InputLabel> */}
+                                  <Button
+                                    variant="shadow"
+                                    color="primary"
+                                    fullWidth
+                                    onClick={() => navigate('/add-vendor')}
+                                    sx={{ height: '30px', width: '20px', mb: 1 }}
+                                  >
+                                    +
+                                  </Button>
+                                </Stack>
+
+                                <Grid container spacing={1} alignItems="center">
+                                  {/* Vendor Autocomplete */}
+                                  <Grid item xs={10}>
+                                    <Autocomplete
+                                      sx={{
+                                        '& .MuiInputBase-root': {
+                                          height: '48px',
+                                          minWidth: '270px',
+                                          maxWidth: 'auto'
+                                        },
+                                        '& .MuiOutlinedInput-root': {
+                                          padding: 0
+                                        },
+                                        '& .MuiAutocomplete-inputRoot': {
+                                          padding: '0 14px'
+                                        }
+                                      }}
+                                      onChange={(_e, vendor) => {
+                                        setFieldValue('vendorId', vendor?.value ?? '');
+                                      }}
+                                      defaultValue={vendors.find((vendor) => vendor.value === values.vendorId) ?? null}
+                                      isOptionEqualToValue={(option, value) => option.value === value.value}
+                                      style={{ width: '120%' }}
+                                      id="vendorId"
+                                      options={vendors}
+                                      renderInput={(params) => (
+                                        <TextField
+                                          {...params}
+                                          name="vendorId"
+                                          placeholder="Vendor Name"
+                                          error={touched.vendorId && Boolean(errors.vendorId)}
+                                          helperText={touched.vendorId && errors.vendorId}
+                                        />
+                                      )}
+                                    />
+                                  </Grid>
+                                </Grid>
                               </Grid>
                               <Grid item xs={12} md={4}>
-                                <InputLabel sx={{ mb: 1}}>{'GST'}</InputLabel>
+                                <InputLabel sx={{ mb: 1 }}>{'GST'}</InputLabel>
                                 <FormControl sx={{ width: '100%', height: '100%' }}>
                                   <Select
                                     displayEmpty
@@ -319,41 +384,53 @@ export default function VendorVoucher() {
                           </Grid>
                           <Grid item xs={12} sm={6} p={2}>
                             <Grid container direction="column" spacing={1}>
-                            <Grid item xs={12} sm={12}>
-                            <InputLabel sx={{ mb: 1 }}>Select Bank</InputLabel>
-                            <Autocomplete
-                             sx={{
-                              '& .MuiInputBase-root': {
-                                height: '48px',
-                                minWidth: '250px',
-                                maxWidth: 'auto'
-                              },
-                              '& .MuiOutlinedInput-root': {
-                                padding: 0
-                              },
-                              '& .MuiAutocomplete-inputRoot': {
-                                padding: '0 14px'
-                              }
-                            }}
-                              value={bankListData.find((bank: { value: string; }) => bank.value === values.bank_id) || null}
-                              onChange={(_e, bank) => {
-                                setFieldValue('bank_id', bank?.value ?? '');
-                              }}
-                              isOptionEqualToValue={(option, value) => option?.value === value?.value}
-                              options={bankListData}
-                              getOptionLabel={(option) => option.label || ''}
-                              loading={loading}
-                              renderInput={(params) => (
-                                <TextField
-                                  {...params}
-                                  name="bank_id"
-                                  placeholder="Select Bank"
-                                  error={touched.bank_id && Boolean(errors.bank_id)}
-                                  helperText={touched.bank_id && errors.bank_id}
+                              <Grid item xs={12} sm={12}>
+                                <InputLabel sx={{ mb: 1 }}>Select Bank</InputLabel>
+                                <Autocomplete
+                                  sx={{
+                                    '& .MuiInputBase-root': {
+                                      height: '48px',
+                                      minWidth: '250px',
+                                      maxWidth: 'auto'
+                                    },
+                                    '& .MuiOutlinedInput-root': {
+                                      padding: 0
+                                    },
+                                    '& .MuiAutocomplete-inputRoot': {
+                                      padding: '0 14px'
+                                    }
+                                  }}
+                                  value={bankListData.find((bank: { id: string; }) => bank.id === values.bank_id) || null}
+                                  onChange={(_e, bank) => {
+                                    setFieldValue('bank_id', bank?.id ?? '');
+                                  }}
+                                  isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                                  options={bankListData}
+                                  getOptionLabel={(option) =>
+                                    `${option.account_type?.name || 'N/A'} - ${option.account_number || ''}`
+                                  }
+                                  loading={loading}
+                                  renderOption={(props, option) => (
+                                    <li {...props}>
+                                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <span>{`${option.account_type?.name || 'N/A'} - ${option.account_number}`}</span>
+                                        <span style={{ fontSize: '0.8rem', color: '#666' }}>
+                                          ({option.bank_name})
+                                        </span>
+                                      </div>
+                                    </li>
+                                  )}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      name="bank_id"
+                                      placeholder="Select Bank"
+                                      error={touched.bank_id && Boolean(errors.bank_id)}
+                                      helperText={touched.bank_id && errors.bank_id}
+                                    />
+                                  )}
                                 />
-                              )}
-                            />
-                          </Grid>
+                              </Grid>
                               {[
                                 {
                                   id: 2,
@@ -392,10 +469,10 @@ export default function VendorVoucher() {
                                   </Grid>
                                 );
                               })}
-                              
+
                             </Grid>
                           </Grid>
-                          
+
                         </Grid>
                       )}
                       {/* {index === 1 && (
