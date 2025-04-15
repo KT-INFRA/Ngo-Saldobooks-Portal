@@ -57,7 +57,9 @@ import { useNavigate } from 'react-router-dom';
 
 export default function VendorVoucher() {
   const { projects } = useGetProjectList();
-  const { accountHeads } = useGetAccountHead(['D', 'B']);
+  // const { accountHeads } = useGetAccountHead(['D', 'B']);
+
+
   const { vendors } = useGetVendorList();
   const { gstLists } = useGetGSTList();
   const { tdsLists } = useGetTDSList();
@@ -179,6 +181,8 @@ export default function VendorVoucher() {
           const getSelectedGST = [...gstLists].find((gst) => gst.value === values.gst);
           const getSelectedTDS = [...tdsLists].find((tds) => tds.value === values.tds);
           const files = useMemo(() => values.projectFiles, [values]);
+          const { accountHeads } = useGetAccountHead(values.projectId);
+ 
 
           return (
             <MainCard title={<VoucherCardTitle voucherType="Debit Voucher" titleText="Vendor"></VoucherCardTitle>}>
