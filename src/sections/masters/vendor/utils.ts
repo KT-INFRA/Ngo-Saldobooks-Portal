@@ -124,6 +124,7 @@ export const formateVendorPayload = async (values: InitialFormValues) => {
     gst_number: values.gst_number || null,
     // address: values.address || null,
     address: values.address,
-    business_id: business_id
+    business_id: business_id,
+    account_type_id: 1
   };
 };
