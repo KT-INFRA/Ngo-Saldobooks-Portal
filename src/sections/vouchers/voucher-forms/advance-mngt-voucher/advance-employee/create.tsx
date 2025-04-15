@@ -56,7 +56,7 @@ import { ReactFilesPreview } from "sections/projects/add-project/FilePicker/Reac
 
 export default function AdvanceMngtVoucher() {
   const { projects } = useGetProjectList();
-  const { accountHeads } = useGetAccountHead();
+  // const { accountHeads } = useGetAccountHead();
   const { employees } = useGetEmployeeList();
 
   const { createVoucher, isLoading: isCreatingVoucher } =
@@ -186,6 +186,8 @@ export default function AdvanceMngtVoucher() {
             setFieldValue(name, value);
           };
           const files = useMemo(() => values.projectFiles, [values]);
+          const { accountHeads } = useGetAccountHead(values.projectId);
+
           return (
             <MainCard
               title={

@@ -57,7 +57,7 @@ import { ReactFilesPreview } from "sections/projects/add-project/FilePicker/Reac
 export default function BankInterestTransferVoucher() {
   const { paymentTypes } = useGetPaymentType();
   const { projects } = useGetProjectList();
-  const { accountHeads } = useGetAccountHead(["I"]);
+  // const { accountHeads } = useGetAccountHead(["I"]);
   const { ifgtbAccounts } = useGetIFGTBAccounts();
   const { createVoucher, isLoading: isCreatingVoucher } =
     useCreateBankInterestDebitVoucher(
@@ -192,6 +192,7 @@ export default function BankInterestTransferVoucher() {
             setTouched,
           } = formikProps;
           const files = useMemo(() => values.projectFiles, [values]);
+          const { accountHeads } = useGetAccountHead(values.projectId);
           return (
             <MainCard
               title={

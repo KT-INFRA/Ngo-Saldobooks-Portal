@@ -47,7 +47,7 @@ import { ReactFilesPreview } from 'sections/projects/add-project/FilePicker/Reac
 export default function AddBankInterestVoucher() {
   const { paymentTypes } = useGetPaymentType();
   const { projects } = useGetProjectList();
-  const { accountHeads } = useGetAccountHead(['I']);
+  // const { accountHeads } = useGetAccountHead(['I']);
   const { bankListData, loading } = useGetOwnBankAccounts();
   console.log('bankListData',bankListData);
   
@@ -161,6 +161,7 @@ export default function AddBankInterestVoucher() {
         {(formikProps) => {
           const { values, touched, errors, setFieldValue, handleChange, handleSubmit, handleBlur, validateForm, setTouched } = formikProps;
           const files = useMemo(() => values.projectFiles, [values]);
+          const { accountHeads } = useGetAccountHead(values.projectId);
           return (
             <MainCard title={<VoucherCardTitle voucherType="Credit Voucher" titleText="Debit Vouchar For General "></VoucherCardTitle>}>
               <Stepper activeStep={activeStep} orientation="vertical">

@@ -67,7 +67,7 @@ import { ReactFilesPreview } from "sections/projects/add-project/FilePicker/Reac
 export default function AddOtherSourceVoucher() {
   const { paymentTypes } = useGetPaymentType();
   const { projects } = useGetProjectList();
-  const { accountHeads } = useGetAccountHead(["C", "B"]);
+  // const { accountHeads } = useGetAccountHead(["C", "B"]);
   const { bankListData, loading } = useGetOwnBankAccounts();
 
   const { createVoucher, isLoading: isCreatingVoucher } =
@@ -199,6 +199,7 @@ export default function AddOtherSourceVoucher() {
             setFieldValue(name, value);
           };
           const files = useMemo(() => values.projectFiles, [values]);
+          const { accountHeads } = useGetAccountHead(values.projectId);
           return (
             <MainCard
               title={
