@@ -52,7 +52,7 @@ import { ReactFilesPreview } from "sections/projects/add-project/FilePicker/Reac
 export default function AddBankChargesVoucher() {
   const { paymentTypes } = useGetPaymentType();
   const { projects } = useGetProjectList();
-  const { accountHeads } = useGetAccountHead(["I"]);
+  // const { accountHeads } = useGetAccountHead(["I"]);
   const { bankListData, loading } = useGetOwnBankAccounts();
 
 
@@ -180,6 +180,7 @@ export default function AddBankChargesVoucher() {
             setTouched,
           } = formikProps;
           const files = useMemo(() => values.projectFiles, [values]);
+          const { accountHeads } = useGetAccountHead(values.projectId);
           return (
             <MainCard
               title={
@@ -279,7 +280,7 @@ export default function AddBankChargesVoucher() {
                                   }}
                                   value={
                                     bankListData.find((bank: { value: string | undefined; }) => bank.value === values.bank_id) || null
-                                  }   
+                                  }
                                   onChange={(_e, bank) => {
                                     setFieldValue('bank_id', bank?.value ?? '');
                                   }}

@@ -55,7 +55,7 @@ import { ReactFilesPreview } from "sections/projects/add-project/FilePicker/Reac
 
 export default function ProjectToProjectVoucher() {
   const { projects } = useGetProjectList();
-  const { accountHeads } = useGetAccountHead(["D", "B"]);
+  // const { accountHeads } = useGetAccountHead(["D", "B"]);
 
   const { createVoucher, isLoading: isCreatingVoucher } =
     useCreatePTPDebitVoucher(
@@ -186,6 +186,7 @@ export default function ProjectToProjectVoucher() {
             setFieldValue(name, value);
           };
           const files = useMemo(() => values.projectFiles, [values]);
+          const { accountHeads } = useGetAccountHead(values.projectId);
           return (
             <MainCard
               title={

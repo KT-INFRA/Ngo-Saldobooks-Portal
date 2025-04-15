@@ -57,7 +57,7 @@ import { ReactFilesPreview } from "sections/projects/add-project/FilePicker/Reac
 
 export default function EmployeeVoucher() {
   const { projects } = useGetProjectList();
-  const { accountHeads } = useGetAccountHead(["D", "B"]);
+  // const { accountHeads } = useGetAccountHead(["D", "B"]);
   const { employees } = useGetEmployeeList(true);
   const { bankListData, loading } = useGetOwnBankAccounts();
 
@@ -190,6 +190,7 @@ export default function EmployeeVoucher() {
             setFieldValue(name, value);
           };
           const files = useMemo(() => values.projectFiles, [values]);
+          const { accountHeads } = useGetAccountHead(values.projectId);
           return (
             <MainCard
               title={

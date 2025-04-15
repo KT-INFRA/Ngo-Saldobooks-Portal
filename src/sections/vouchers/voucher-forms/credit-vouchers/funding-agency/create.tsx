@@ -56,7 +56,7 @@ import { useGetDonorList } from 'api/masters';
 export default function AddFundingAgencyVoucher() {
   const { paymentTypes } = useGetPaymentType();
   const { projects } = useGetProjectList();
-  const { accountHeads } = useGetAccountHead(['R', 'C']);
+  // const { accountHeads } = useGetAccountHead(['R', 'C']);
   const { DonorList, DonorListLoading, DonorError } = useGetDonorList();
   const { bankListData, loading } = useGetOwnBankAccounts();
 
@@ -170,6 +170,7 @@ export default function AddFundingAgencyVoucher() {
             setFieldValue(name, value);
           };
           const files = useMemo(() => values.projectFiles, [values]);
+          const { accountHeads } = useGetAccountHead(values.projectId);
           return (
             <MainCard title={<VoucherCardTitle voucherType="Credit Voucher" titleText="Donor"></VoucherCardTitle>}>
               <Stepper activeStep={activeStep} orientation="vertical">
