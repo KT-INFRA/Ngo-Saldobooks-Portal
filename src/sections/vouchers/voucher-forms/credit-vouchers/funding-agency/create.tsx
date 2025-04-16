@@ -217,6 +217,7 @@ export default function AddFundingAgencyVoucher() {
                                   renderInput={(params) => (
                                     <TextField
                                       {...params}
+                                      value={'title'}
                                       error={touched.projectId && Boolean(errors.projectId)}
                                       helperText={touched.projectId && errors.projectId}
                                       name="projectId"
