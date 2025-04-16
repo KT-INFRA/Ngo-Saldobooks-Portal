@@ -278,25 +278,21 @@ export default function AddBankChargesVoucher() {
                                       padding: '0 14px'
                                     }
                                   }}
-                                  value={
-                                    bankListData.find((bank: { value: string | undefined; }) => bank.value === values.bank_id) || null
-                                  }
+                                  value={bankListData.find((bank: { id: string; }) => bank.id === values.bank_id) || null}
                                   onChange={(_e, bank) => {
-                                    setFieldValue('bank_id', bank?.value ?? '');
+                                    setFieldValue('bank_id', bank?.id ?? '');
                                   }}
-                                  isOptionEqualToValue={(option, value) => option?.value === value?.value}
+                                  isOptionEqualToValue={(option, value) => option?.id === value?.id}
                                   options={bankListData}
                                   getOptionLabel={(option) =>
-                                    `${option.account_type?.name || 'N/A'} - ${option.account_number}`
+                                    `${option.account_type?.name || 'N/A'} - ${option.account_number || ''}`
                                   }
                                   loading={loading}
                                   renderOption={(props, option) => (
                                     <li {...props}>
                                       <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                        <span>
-                                          {`${option.account_type?.name || 'N/A'} - ${option.account_number}`}
-                                        </span>
-                                        <span style={{ fontSize: '0.8rem', color: 'gray' }}>
+                                        <span>{`${option.account_type?.name || 'N/A'} - ${option.account_number}`}</span>
+                                        <span style={{ fontSize: '0.8rem', color: '#666' }}>
                                           ({option.bank_name})
                                         </span>
                                       </div>
@@ -312,7 +308,6 @@ export default function AddBankChargesVoucher() {
                                     />
                                   )}
                                 />
-
                               </Grid>
                               {/* Voucher Date */}
                               <Grid item xs={12} md={12}>

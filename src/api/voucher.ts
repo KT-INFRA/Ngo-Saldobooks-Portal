@@ -222,7 +222,7 @@ export const useGetProjectList = () => {
 
   const formattedData = useMemo(() => {
     return [...(data?.data?.data || [])].map((item: any) => ({
-      label: item['project_code'],
+      label: item['title'],
       value: item['id']
     }));
   }, [data?.data?.data]);

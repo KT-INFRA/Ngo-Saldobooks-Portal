@@ -49,8 +49,8 @@ export default function AddBankInterestVoucher() {
   const { projects } = useGetProjectList();
   // const { accountHeads } = useGetAccountHead(['I']);
   const { bankListData, loading } = useGetOwnBankAccounts();
-  console.log('bankListData',bankListData);
-  
+  console.log('bankListData', bankListData);
+
 
 
   const { createVoucher, isLoading: isCreatingVoucher } = useCreateDebitVoucherGeneral(
@@ -163,7 +163,7 @@ export default function AddBankInterestVoucher() {
           const files = useMemo(() => values.projectFiles, [values]);
           const { accountHeads } = useGetAccountHead(values.projectId);
           return (
-            <MainCard title={<VoucherCardTitle voucherType="Credit Voucher" titleText="Debit Vouchar For General "></VoucherCardTitle>}>
+            <MainCard title={<VoucherCardTitle voucherType="Credit Voucher" titleText="Debit Voucher For General "></VoucherCardTitle>}>
               <Stepper activeStep={activeStep} orientation="vertical">
                 {steps.map((step, index) => (
                   <Step key={step}>
@@ -235,14 +235,26 @@ export default function AddBankInterestVoucher() {
                                       padding: '0 14px'
                                     }
                                   }}
-                                  value={bankListData.find((bank:any) => bank.value == values.bank_id) || null}
+                                  value={bankListData.find((bank: { id: string; }) => bank.id === values.bank_id) || null}
                                   onChange={(_e, bank) => {
-                                    setFieldValue('bank_id', bank?.value ?? '');
+                                    setFieldValue('bank_id', bank?.id ?? '');
                                   }}
-                                  isOptionEqualToValue={(option, value) => option?.value === value?.value}
+                                  isOptionEqualToValue={(option, value) => option?.id === value?.id}
                                   options={bankListData}
-                                  getOptionLabel={(option) => option.label || ''}
+                                  getOptionLabel={(option) =>
+                                    `${option.account_type?.name || 'N/A'} - ${option.account_number || ''}`
+                                  }
                                   loading={loading}
+                                  renderOption={(props, option) => (
+                                    <li {...props}>
+                                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <span>{`${option.account_type?.name || 'N/A'} - ${option.account_number}`}</span>
+                                        <span style={{ fontSize: '0.8rem', color: '#666' }}>
+                                          ({option.bank_name})
+                                        </span>
+                                      </div>
+                                    </li>
+                                  )}
                                   renderInput={(params) => (
                                     <TextField
                                       {...params}
