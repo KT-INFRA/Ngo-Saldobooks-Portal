@@ -404,7 +404,8 @@ export default function VendorVoucher() {
                                       padding: '0 14px'
                                     }
                                   }}
-                                  value={bankListData.find((bank: { id: string; }) => bank.id === values.bank_id) || null}
+                                  value={bankListData.find((bank: { id: string | number }) => String(bank.id) === String(values.bank_id)) || null}
+
                                   onChange={(_e, bank) => {
                                     setFieldValue('bank_id', bank?.id ?? '');
                                   }}
