@@ -1,6 +1,7 @@
 import { mimeTypes } from 'data/mimes';
 import * as Yup from 'yup';
 
+// Interfaces
 export interface Item {
   id: number;
   name: string;
@@ -17,14 +18,14 @@ export interface InitialValues {
   tds: number;
   items: Item[];
   projectFiles: File[];
-  bank_id: string;
+  bank_id?: number; // updated to number
 }
 
 export type FormValues = {
-  // Define your form values type here
   [key: string]: any;
 };
 
+// Initial Form Values
 export const initialValues: InitialValues = {
   vendorId: 0,
   projectId: 0,
@@ -32,7 +33,7 @@ export const initialValues: InitialValues = {
   gst: 0,
   tds: 0,
   narration: '',
-  bank_id: '',
+  bank_id: undefined, // updated from '' to undefined
   items: [
     {
       id: 1,
@@ -44,73 +45,30 @@ export const initialValues: InitialValues = {
   projectFiles: []
 };
 
+// Validation Schemas
 export const firstStepValidationSchema = Yup.object({
   vendorId: Yup.number().optional(),
-  // tds: Yup.number().required('TDS is required').min(1, 'Please select a valid TDS'),
   tds: Yup.number(),
-  // gst: Yup.number().required('GST is required').min(1, 'Please select a valid GST'),
   gst: Yup.number(),
-  // projectId: Yup.number().required('Project ID is required').min(1, 'Please select a valid Project ID'),
   projectId: Yup.number().optional(),
-  bank_id: Yup.string().required('Bank ID is required'),
-  // letterReferenceNo: Yup.string().required('Letter Reference Number is required'),
+  bank_id: Yup.number().optional(), // remains correct
   narration: Yup.string().required('Narration is required'),
   letterReferenceNo: Yup.string().optional(),
-  // narration: Yup.string().optional(),
-  
 });
 
 export const secondStepValidationSchema = Yup.object({
-  items: Yup.array()
-    .of(
-      Yup.object().shape({
-        // name: Yup.string().required('Item Name is required'),
-        name: Yup.string().optional(),
-        // account_head_id: Yup.number().required('Account Head ID is required').min(1, 'Please select a valid Account Head ID'),
-        account_head_id : Yup.number().optional(),
-        // taxableAmount: Yup.number().required('Tax Amount is required').min(1, 'Tax Amount must be greater than 0'),
-        taxableAmount : Yup.number().optional()
-      })
-    )
-    
-}); 
+  items: Yup.array().of(
+    Yup.object().shape({
+      name: Yup.string().optional(),
+      account_head_id: Yup.number().optional(),
+      taxableAmount: Yup.number().optional()
+    })
+  )
+});
 
 export const combinedValidationSchema = firstStepValidationSchema.concat(secondStepValidationSchema);
 
-// export const getTaxData = (taxablePrice: number = 0, gst: string | number, tds: string | number) => {
-// const gstPercent = +gst || 0;
-// const tdsPercent = +tds || 0;
-// const gstAmount = (taxablePrice * gstPercent) / 100;
-// const tdsAmount = (taxablePrice * tdsPercent) / 100;
-// const taxAmount = taxablePrice + gstAmount;
-// const totalAmount = taxAmount;
-// console.log(totalAmount);
-// const netAmount = Math.max(0, taxAmount - tdsAmount);
-// console.log(netAmount)
-//   return {
-//     gstAmount: gstAmount,
-//     tdsAmount: tdsAmount,
-//     netAmount: netAmount,
-//     totalAmount: totalAmount
-//   };
-// };
-
-// export const getTaxData = (taxablePrice: number = 0, gst: string | number, tds: string | number) => {
-//   const gstPercent = +gst || 0;
-//   const tdsPercent = +tds || 0;
-//   const gstAmount = parseFloat(((taxablePrice * gstPercent) / 100).toFixed(2));
-//   const tdsAmount = Math.round((taxablePrice * tdsPercent) / 100);
-//   const taxAmount = Math.round(taxablePrice + gstAmount);
-//   const totalAmount = taxAmount;
-//   const netAmount = Math.max(0, taxAmount - tdsAmount);
-//   return {
-//     gstAmount,
-//     tdsAmount,
-//     totalAmount,
-//     netAmount
-//   };
-// };
-
+// Tax Calculation
 export const getTaxData = (taxablePrice: number = 0, gst: string | number, tds: string | number) => {
   const gstPercent = +gst || 0;
   const tdsPercent = +tds || 0;
@@ -120,7 +78,6 @@ export const getTaxData = (taxablePrice: number = 0, gst: string | number, tds: 
   const taxAmount = taxablePrice + gstAmount;
 
   const netAmount = parseFloat(((taxablePrice + gstAmount) - tdsAmount).toFixed(2));
-
   const totalAmount = parseFloat(taxAmount.toFixed(2));
 
   return {
@@ -131,10 +88,11 @@ export const getTaxData = (taxablePrice: number = 0, gst: string | number, tds: 
   };
 };
 
+// File Handling
 interface FileObject {
   file: string;
-  extension: string; // Extension type .png, .jpg, ....
-  mime_type: string; // MIME TYPE image/jpeg, application/pdf,...
+  extension: string;
+  mime_type: string;
   description: string;
 }
 type FileExtensions = keyof typeof mimeTypes;
@@ -170,6 +128,7 @@ async function getProjectFilesBase64(files: File[]): Promise<FileObject[]> {
   return Promise.all(promises);
 }
 
+// Payload Formatter
 export const formateCreateVoucherPayload = async ({
   values,
   gstPercent,
@@ -188,8 +147,7 @@ export const formateCreateVoucherPayload = async ({
     letter_ref_no: values.letterReferenceNo,
     narration: values.narration,
     receiver_type_id: 2,
-    bank_id: values.bank_id,
-    // project_id: values.projectId,
+    bank_id: values.bank_id ?? null, // use null if undefined
     items: values.items.map((item, index) => {
       const { tdsAmount, gstAmount, totalAmount } = getTaxData(item.taxableAmount, gstPercent, tdsPercent);
       return {
