@@ -114,7 +114,7 @@ export const formateCreateBankVoucherPayload = async (values: InitialValues) => 
     bank_id: values.bank_id,
     items: {
       account_head_id: values.accountHeadId,
-      amount: values.amount,
+      amount: Number(values.amount),
       purpose: values.purpose,
       payment_type_id: values.paymentType,
       ref_number: values.paymentRef,
