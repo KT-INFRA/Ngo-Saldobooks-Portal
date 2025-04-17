@@ -235,7 +235,7 @@ export default function AddBankInterestVoucher() {
                                       padding: '0 14px'
                                     }
                                   }}
-                                  value={bankListData.find((bank: { id: string; }) => bank.id === values.bank_id) || null}
+                                  value={bankListData.find((bank: { id: string | number }) => bank.id === Number(values.bank_id)) || null}
                                   onChange={(_e, bank) => {
                                     setFieldValue('bank_id', bank?.id ?? '');
                                   }}
@@ -380,13 +380,15 @@ export default function AddBankInterestVoucher() {
                                   <Grid item xl={12} xs={12} md={12}>
                                     <InputLabel sx={{ mb: 1 }}>{field.label}</InputLabel>
                                     <TextField
-                                      type={field.type}
+                                      type={field.field === 'amount' ? 'number' : 'text'}
                                       id={field.field}
                                       name={field.field}
                                       placeholder={`Enter ${field.label}`}
-                                      // eslint-disable-next-line eqeqeq
                                       value={value == 0 ? '' : value}
-                                      onChange={handleChange}
+                                      onChange={(e) => {
+                                        const { name, value } = e.target;
+                                        setFieldValue(name, field.field === 'amount' ? Number(value) : value);
+                                      }}
                                       onBlur={handleBlur}
                                       error={
                                         touched[field.field as keyof typeof initialValues] &&
@@ -398,6 +400,7 @@ export default function AddBankInterestVoucher() {
                                       }
                                       fullWidth
                                     />
+
                                   </Grid>
                                 );
                               })}
