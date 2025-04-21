@@ -7,6 +7,9 @@ import { useCreateDebitVoucher, useGetAccountHead, useGetGSTList, useGetOwnBankA
 
 import { FieldArray, Formik, FormikErrors, FormikTouched } from 'formik';
 import * as Yup from 'yup';
+import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+
 
 import {
   Alert,
@@ -52,6 +55,8 @@ import { SnackbarProps } from 'types/snackbar';
 import VoucherCardTitle from '../../components/voucher-card-title';
 import { ReactFilesPreview } from 'sections/projects/add-project/FilePicker/ReactFilesPreview';
 import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
+
 
 // ==============================|| Account Voucher - ADD Voucher ||============================== //
 
@@ -337,6 +342,20 @@ export default function VendorVoucher() {
                                     />
                                   </Grid>
                                 </Grid>
+                              </Grid>
+                              <Grid item xs={12} md={12}>
+                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                  <InputLabel sx={{ mb: 1 }}>{'Voucher Date'}</InputLabel>
+                                  <Stack>
+                                    <MobileDatePicker
+                                      format={'dd/MM/yyyy'}
+                                      value={new Date(values.voucherDate)}
+                                      onChange={(date) => {
+                                        setFieldValue('voucherDate', dayjs(date).format('YYYY-MM-DD'));
+                                      }}
+                                    />
+                                  </Stack>
+                                </LocalizationProvider>
                               </Grid>
                               <Grid item xs={12} md={4}>
                                 <InputLabel sx={{ mb: 1 }}>{'GST'}</InputLabel>

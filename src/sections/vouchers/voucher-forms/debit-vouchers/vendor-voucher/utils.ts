@@ -1,5 +1,7 @@
 import { mimeTypes } from 'data/mimes';
 import * as Yup from 'yup';
+import dayjs from 'dayjs';
+
 
 // Interfaces
 export interface Item {
@@ -19,6 +21,8 @@ export interface InitialValues {
   items: Item[];
   projectFiles: File[];
   bank_id?: number; // updated to number
+  voucherDate: string;
+
 }
 
 export type FormValues = {
@@ -33,6 +37,8 @@ export const initialValues: InitialValues = {
   gst: 0,
   tds: 0,
   narration: '',
+  voucherDate: dayjs().format('YYYY-MM-DD'),
+
   bank_id: undefined, // updated from '' to undefined
   items: [
     {
@@ -146,8 +152,9 @@ export const formateCreateVoucherPayload = async ({
     project_id: values.projectId === 0 ? null : values.projectId,
     letter_ref_no: values.letterReferenceNo,
     narration: values.narration,
+    date: values.voucherDate,
     receiver_type_id: 2,
-    bank_id: values.bank_id ?? null, // use null if undefined
+    bank_id: values.bank_id ?? null,
     items: values.items.map((item, index) => {
       const { tdsAmount, gstAmount, totalAmount } = getTaxData(item.taxableAmount, gstPercent, tdsPercent);
       return {
