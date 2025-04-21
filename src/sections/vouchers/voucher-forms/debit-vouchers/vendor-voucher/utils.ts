@@ -22,7 +22,6 @@ export interface InitialValues {
   projectFiles: File[];
   bank_id?: number; // updated to number
   voucherDate: string;
-
 }
 
 export type FormValues = {
@@ -34,8 +33,8 @@ export const initialValues: InitialValues = {
   vendorId: 0,
   projectId: 0,
   letterReferenceNo: '',
-  gst: 0,
-  tds: 0,
+  gst: 5,
+  tds: 4,
   narration: '',
   voucherDate: dayjs().format('YYYY-MM-DD'),
 
