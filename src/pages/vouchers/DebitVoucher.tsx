@@ -370,16 +370,16 @@ export default function CrdeditVoucherListPage() {
           return cell.getValue();
         }
       },
-      {
-        header: 'Funding Agency',
-        accessorKey: 'funding_agencies',
-        cell: (cell) => {
-          if (cell.getValue() === '' || cell.getValue() === null) {
-            return '-';
-          }
-          return cell.getValue();
-        }
-      },
+      // {
+      //   header: 'Funding Agency',
+      //   accessorKey: 'funding_agencies',
+      //   cell: (cell) => {
+      //     if (cell.getValue() === '' || cell.getValue() === null) {
+      //       return '-';
+      //     }
+      //     return cell.getValue();
+      //   }
+      // },
       {
         header: 'Amount',
         accessorKey: 'amount',
