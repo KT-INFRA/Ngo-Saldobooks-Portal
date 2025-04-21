@@ -35,7 +35,7 @@ import {
   Typography,
   Divider,
   Button,
-  CardActions,
+  CardActions,Dialog, DialogActions, DialogContent, DialogTitle,
   FormHelperText
 } from '@mui/material';
 import { Add } from 'iconsax-react';
@@ -60,7 +60,7 @@ import dayjs from 'dayjs';
 
 // ==============================|| Account Voucher - ADD Voucher ||============================== //
 
-export default function VendorVoucher() {
+export default function VendorVoucher(modalToggler: () => void) {
   const { projects } = useGetProjectList();
   // const { accountHeads } = useGetAccountHead(['D', 'B']);
 
@@ -70,52 +70,78 @@ export default function VendorVoucher() {
   const { tdsLists } = useGetTDSList();
   const { bankListData, loading } = useGetOwnBankAccounts();
   const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState('');
+  const [isCreatingVoucher, setIsCreatingVoucher] = useState(false);
 
 
-  const { createVoucher, isLoading: isCreatingVoucher } = useCreateDebitVoucher(
-    (response: any) => {
+  // const { createVoucher, isLoading: isCreatingVoucher } = useCreateDebitVoucher(
+  //   (response: any) => {
+  //     if (response?.result) {
+  //       // Success response
+  //       openSnackbar({
+  //         open: true,
+  //         message: response.message,
+  //         anchorOrigin: { vertical: 'top', horizontal: 'right' },
+  //         variant: 'alert',
+  //         alert: {
+  //           color: 'success'
+  //         }
+  //       } as SnackbarProps);
+  //     } else if (Array.isArray(response) && response.length > 0) {
+  //       // Handling validation errors  const { bankListData, loading } = useGetOwnBankAccounts();
+
+  //       const errorMessages = response.map((err) => err.msg).join(', ');
+  //       openSnackbar({
+  //         open: true,
+  //         message: errorMessages,
+  //         anchorOrigin: { vertical: 'top', horizontal: 'right' },
+  //         variant: 'alert',
+  //         alert: {
+  //           color: 'error'
+  //         }
+  //       } as SnackbarProps);
+  //     }
+  //   },
+  //   (error: any) => {
+  //     var errorMessage = error.message;
+  //     if (Array.isArray(error)) {
+  //       errorMessage = error[0].msg;
+  //     } else {
+  //       errorMessage = 'An error occurred while updating the project.';
+  //     }
+  //     openSnackbar({
+  //       open: true,
+  //       message: errorMessage,
+  //       anchorOrigin: { vertical: 'top', horizontal: 'right' },
+  //       variant: 'alert',
+  //       alert: {
+  //         color: 'error'
+  //       }
+  //     } as SnackbarProps);
+  //   }
+  // );
+ 
+  const { createVoucher } = useCreateDebitVoucher(
+    (response) => {
       if (response?.result) {
-        // Success response
-        openSnackbar({
-          open: true,
-          message: response.message,
-          anchorOrigin: { vertical: 'top', horizontal: 'right' },
-          variant: 'alert',
-          alert: {
-            color: 'success'
-          }
-        } as SnackbarProps);
+        setDialogMessage(response.message);
+        setOpenDialog(true); // Show success dialog
       } else if (Array.isArray(response) && response.length > 0) {
-        // Handling validation errors  const { bankListData, loading } = useGetOwnBankAccounts();
-
         const errorMessages = response.map((err) => err.msg).join(', ');
-        openSnackbar({
-          open: true,
-          message: errorMessages,
-          anchorOrigin: { vertical: 'top', horizontal: 'right' },
-          variant: 'alert',
-          alert: {
-            color: 'error'
-          }
-        } as SnackbarProps);
+        setDialogMessage(errorMessages);
+        setOpenDialog(true); // Show error dialog
       }
     },
-    (error: any) => {
-      var errorMessage = error.message;
+    (error) => {
+      let errorMessage = error.message;
       if (Array.isArray(error)) {
         errorMessage = error[0].msg;
       } else {
-        errorMessage = 'An error occurred while updating the project.';
+        errorMessage = 'An error occurred while creating the voucher.';
       }
-      openSnackbar({
-        open: true,
-        message: errorMessage,
-        anchorOrigin: { vertical: 'top', horizontal: 'right' },
-        variant: 'alert',
-        alert: {
-          color: 'error'
-        }
-      } as SnackbarProps);
+      setDialogMessage(errorMessage);
+      setOpenDialog(true); // Show error dialog
     }
   );
 
@@ -132,7 +158,7 @@ export default function VendorVoucher() {
     }
   }, [activeStep]);
 
-  const handleNext = async (
+ const handleNext = async (
     validateForm: () => Promise<FormikErrors<InitialValues>>,
     setTouched: (touched: FormikTouched<InitialValues>) => Promise<void | FormikErrors<InitialValues>>
   ) => {
@@ -160,17 +186,20 @@ export default function VendorVoucher() {
         gstPercent: getSelectedGST?.percent,
         tdsPercent: getSelectedTDS?.percent
       });
-      // console.log('formatedValues1', formatedValues);
+
       if (formatedValues) {
+        setIsCreatingVoucher(true); // Set loading state for submission
         await createVoucher(formatedValues as any);
-        setActiveStep(0);
-        actions.resetForm();
+        setActiveStep(0); // Reset to first step after success
+        actions.resetForm(); // Reset form after success
+        setIsCreatingVoucher(false); // Reset loading state
       }
     } catch (error) {
       console.error('Error creating voucher', error);
+      setDialogMessage('An error occurred while creating the voucher.');
+      setOpenDialog(true); // Show error dialog on failure
     }
   };
-
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
@@ -187,7 +216,8 @@ export default function VendorVoucher() {
           const getSelectedTDS = [...tdsLists].find((tds) => tds.value === values.tds);
           const files = useMemo(() => values.projectFiles, [values]);
           const { accountHeads } = useGetAccountHead(values.projectId);
- 
+
+          const [open, setOpen] = useState(false);
 
           return (
             <MainCard title={<VoucherCardTitle voucherType="Debit Voucher" titleText="Vendor"></VoucherCardTitle>}>
@@ -291,19 +321,19 @@ export default function VendorVoucher() {
                               </Grid> */}
 
                               <Grid item xs={12} md={12} spacing={1}>
-                                <Stack direction={'row'} justifyContent={'space-between'}>
+                                <Stack direction="row" justifyContent="space-between">
                                   <InputLabel sx={{ mb: 1 }}>{'Vendor Name'}</InputLabel>
-                                  {/* <InputLabel sx={{ mb: 1 }}>{'Vendor Name'}</InputLabel> */}
                                   <Button
                                     variant="shadow"
                                     color="primary"
                                     fullWidth
-                                    onClick={() => navigate('/add-vendor')}
+                                    onClick={modalToggler}
                                     sx={{ height: '30px', width: '20px', mb: 1 }}
                                   >
                                     +
                                   </Button>
                                 </Stack>
+
 
                                 <Grid container spacing={1} alignItems="center">
                                   {/* Vendor Autocomplete */}
@@ -675,7 +705,7 @@ export default function VendorVoucher() {
                   </Step>
                 ))}
               </Stepper>
-              <CardActions sx={{ justifyContent: 'flex-end' }}>
+              {/* <CardActions sx={{ justifyContent: 'flex-end' }}>
                 <Button
                   onClick={async () => {
                     await handleNext(validateForm, setTouched);
@@ -697,7 +727,43 @@ export default function VendorVoucher() {
                 >
                   Back
                 </Button>
-              </CardActions>
+              </CardActions> */}
+              <CardActions sx={{ justifyContent: 'flex-end' }}>
+        <Button
+          onClick={async () => {
+            await handleNext(validateForm, setTouched);
+            if (isLastStep) {
+              handleSubmit();
+            }
+          }}
+          variant="contained"
+          color="primary"
+        >
+          {isCreatingVoucher ? 'Loading..' : isLastStep ? 'Save' : 'Continue'}
+        </Button>
+        <Button
+          onClick={() => {
+            setActiveStep((prev) => Math.max(0, prev - 1));
+          }}
+          variant="outlined"
+          color="secondary"
+        >
+          Back
+        </Button>
+      </CardActions>
+
+      {/* Dialog for Success/Error Message */}
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>{dialogMessage.includes('error') ? 'Error' : 'Success'}</DialogTitle>
+        <DialogContent>
+          <p>{dialogMessage}</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
             </MainCard>
           );
         }}
