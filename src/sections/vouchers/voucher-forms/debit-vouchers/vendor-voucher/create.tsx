@@ -60,7 +60,7 @@ import dayjs from 'dayjs';
 
 // ==============================|| Account Voucher - ADD Voucher ||============================== //
 
-export default function VendorVoucher(modalToggler: () => void) {
+export default function VendorVoucher() {
   const { projects } = useGetProjectList();
   // const { accountHeads } = useGetAccountHead(['D', 'B']);
 
@@ -327,7 +327,7 @@ export default function VendorVoucher(modalToggler: () => void) {
                                     variant="shadow"
                                     color="primary"
                                     fullWidth
-                                    onClick={modalToggler}
+                                    // onClick={modalToggler}
                                     sx={{ height: '30px', width: '20px', mb: 1 }}
                                   >
                                     +
@@ -410,29 +410,6 @@ export default function VendorVoucher(modalToggler: () => void) {
                                   )}
                                 </FormControl>
                               </Grid>
-                              <Grid item xs={12} md={12}>
-                                <InputLabel sx={{ mb: 1 }}>{'TDS'}</InputLabel>
-                                <FormControl sx={{ width: '100%', height: '100%' }}>
-                                  <Select
-                                    displayEmpty
-                                    placeholder="Select TDS"
-                                    name="tds"
-                                    value={values.tds}
-                                    onBlur={handleBlur}
-                                    onChange={handleChange}
-                                  >
-                                    <MenuItem disabled value="0">
-                                      Select TDS
-                                    </MenuItem>
-                                    {[...tdsLists].map((tds) => (
-                                      <MenuItem value={tds.value}>{tds.label}</MenuItem>
-                                    ))}
-                                  </Select>
-                                  {touched.tds && Boolean(errors.tds) && (
-                                    <FormHelperText error={Boolean(errors.tds)}>{errors.tds}</FormHelperText>
-                                  )}
-                                </FormControl>
-                              </Grid>
                             </Grid>
                           </Grid>
                           <Grid item xs={12} sm={6} p={2}>
@@ -500,8 +477,8 @@ export default function VendorVoucher(modalToggler: () => void) {
                                 }
                               ].map((field: any) => {
                                 return (
-                                  <Grid item xs={12} md={12}>
-                                    <InputLabel sx={{ mb: 1 }}>{field.label}</InputLabel>
+                                  <Grid item xs={12} sm={12}>
+                                    <InputLabel sx={{ mb: 1, mt: 1 }}>{field.label}</InputLabel>
                                     <TextField
                                       type={field.type}
                                       id={field.field}
@@ -523,9 +500,32 @@ export default function VendorVoucher(modalToggler: () => void) {
                                   </Grid>
                                 );
                               })}
-
                             </Grid>
+                            <Grid item xs={12} sm={12} spacing={1}>
+                                <InputLabel sx={{ mb: 1, mt: 1 }}>{'TDS'}</InputLabel>
+                                <FormControl sx={{ width: '100%', height: '100%'}}>
+                                  <Select
+                                    displayEmpty
+                                    placeholder="Select TDS"
+                                    name="tds"
+                                    value={values.tds}
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                  >
+                                    <MenuItem disabled value="0">
+                                      Select TDS
+                                    </MenuItem>
+                                    {[...tdsLists].map((tds) => (
+                                      <MenuItem value={tds.value}>{tds.label}</MenuItem>
+                                    ))}
+                                  </Select>
+                                  {touched.tds && Boolean(errors.tds) && (
+                                    <FormHelperText error={Boolean(errors.tds)}>{errors.tds}</FormHelperText>
+                                  )}
+                                </FormControl>
+                              </Grid>
                           </Grid>
+                          
 
                         </Grid>
                       )}
